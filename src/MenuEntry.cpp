@@ -9,7 +9,6 @@ MenuEntry::MenuEntry(String _name, MenuEntry *_parent) {
 }
 
 void MenuEntry::setSibling(MenuEntry *sibling) {
-  // TODO: Dangerous to dereference if sibling was not malloced?
   nextSibling = sibling;
   sibling->prevSibling = this;
 }

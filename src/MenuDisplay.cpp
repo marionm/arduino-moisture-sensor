@@ -1,12 +1,12 @@
 #include "MenuDisplay.h"
 
-MenuDisplay::MenuDisplay(Adafruit_RGBLCDShield _lcd) {
+MenuDisplay::MenuDisplay(Adafruit_RGBLCDShield *_lcd) {
   lcd = _lcd;
   buttonPressed = false;
 }
 
-void MenuDisplay::enable(MenuEntry entry) {
-  lcd.begin(16, 2);
+void MenuDisplay::enable(MenuEntry *entry) {
+  lcd->begin(16, 2);
 
   currentEntry = entry;
   renderScreen();
@@ -17,7 +17,7 @@ void MenuDisplay::disable() {
 }
 
 void MenuDisplay::update() {
-  byte buttons = lcd.readButtons();
+  byte buttons = lcd->readButtons();
   if(buttons && !buttonPressed) {
     buttonPressed = true;
     update(buttons, currentEntry);
@@ -26,47 +26,47 @@ void MenuDisplay::update() {
   }
 }
 
-void MenuDisplay::update(byte buttons, MenuEntry entry) {
+void MenuDisplay::update(byte buttons, MenuEntry *entry) {
   if(buttons & BUTTON_UP) {
-    if(currentEntry.prevSibling) {
-      currentEntry = *currentEntry.prevSibling;
+    if(currentEntry->prevSibling) {
+      currentEntry = currentEntry->prevSibling;
     } else {
-      while(currentEntry.nextSibling) {
-        currentEntry = *currentEntry.nextSibling;
+      while(currentEntry->nextSibling) {
+        currentEntry = currentEntry->nextSibling;
       }
     }
     renderScreen();
 
   } else if(buttons & BUTTON_DOWN) {
-    if(currentEntry.nextSibling) {
-      currentEntry = *currentEntry.nextSibling;
+    if(currentEntry->nextSibling) {
+      currentEntry = currentEntry->nextSibling;
     } else {
-      while(currentEntry.prevSibling) {
-        currentEntry = *currentEntry.prevSibling;
+      while(currentEntry->prevSibling) {
+        currentEntry = currentEntry->prevSibling;
       }
     }
     renderScreen();
 
-  } else if(buttons & BUTTON_LEFT && currentEntry.parent) {
-    currentEntry = *currentEntry.parent;
+  } else if(buttons & BUTTON_LEFT && currentEntry->parent) {
+    currentEntry = currentEntry->parent;
     renderScreen();
 
-  } else if(buttons & (BUTTON_RIGHT | BUTTON_SELECT) && currentEntry.child) {
-    currentEntry = *currentEntry.child;
+  } else if(buttons & (BUTTON_RIGHT | BUTTON_SELECT) && currentEntry->child) {
+    currentEntry = currentEntry->child;
     renderScreen();
   }
 }
 
 void MenuDisplay::renderScreen() {
-  lcd.clear();
+  lcd->clear();
 
-  lcd.setCursor(0, 0);
-  lcd.print("> ");
-  lcd.print(currentEntry.name);
+  lcd->setCursor(0, 0);
+  lcd->print("> ");
+  lcd->print(currentEntry->name);
 
-  if(currentEntry.nextSibling) {
-    lcd.setCursor(0, 1);
-    lcd.print("  ");
-    lcd.print(currentEntry.nextSibling->name);
+  if(currentEntry->nextSibling) {
+    lcd->setCursor(0, 1);
+    lcd->print("  ");
+    lcd->print(currentEntry->nextSibling->name);
   }
 }

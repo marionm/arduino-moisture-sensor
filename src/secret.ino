@@ -5,7 +5,7 @@
 #include "MenuDisplay.h"
 
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
-MenuDisplay menu = MenuDisplay(lcd);
+MenuDisplay menu = MenuDisplay(&lcd);
 
 void setup() {
   MenuEntry *menuCheckNow = new MenuEntry("Check now");
@@ -30,14 +30,15 @@ void setup() {
   menuSetPhone->setSibling(menuSetEarliestTime);
   menuSetEarliestTime->setSibling(menuSetLatestTime);
 
-  MenuEntry *menuSetSSID     = new MenuEntry("SSID",     menuWireless);
-  MenuEntry *menuSetUsername = new MenuEntry("Username", menuWireless);
-  MenuEntry *menuSetPassword = new MenuEntry("Password", menuWireless);
+  MenuEntry *menuSetSSID      = new MenuEntry("SSID",          menuWireless);
+  MenuEntry *menuSetUsername  = new MenuEntry("Username",      menuWireless);
+  MenuEntry *menuSetPassword  = new MenuEntry("Password",      menuWireless);
+  MenuEntry *menuTestWireless = new MenuEntry("Test wireless", menuWireless);
   menuWireless->child = menuSetSSID;
   menuSetSSID->setSibling(menuSetUsername);
   menuSetUsername->setSibling(menuSetPassword);
 
-  menu.enable(*menuCheckNow);
+  menu.enable(menuCheckNow);
 }
 
 void loop() {

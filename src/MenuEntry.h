@@ -3,12 +3,6 @@
 
 #include <Arduino.h>
 
-//TODO: Extract basic elements to struct, and compose different types?
-//TODO: Need three types, each with one action:
-//        go to child
-//        do something and output results
-//        accept input and save results
-
 class MenuEntry {
   public:
     String name;

@@ -3,17 +3,17 @@
 
 class MenuDisplay {
   public:
-    MenuDisplay(Adafruit_RGBLCDShield lcd);
+    MenuDisplay(Adafruit_RGBLCDShield *lcd);
 
-    void enable(MenuEntry entry);
+    void enable(MenuEntry *entry);
     void disable();
     void update();
 
   private:
-    Adafruit_RGBLCDShield lcd;
-    MenuEntry currentEntry;
+    Adafruit_RGBLCDShield *lcd;
+    MenuEntry *currentEntry;
     bool buttonPressed;
 
-    void update(byte buttons, MenuEntry entry);
+    void update(byte buttons, MenuEntry *entry);
     void renderScreen();
 };
