@@ -1,4 +1,4 @@
-#include "MenuTier.h"
+#include "tier.h"
 
 MenuTier::MenuTier(String name, MenuEntry *parent) :
 MenuEntry(name, parent) {

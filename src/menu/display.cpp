@@ -1,4 +1,4 @@
-#include "MenuDisplay.h"
+#include "display.h"
 
 MenuDisplay::MenuDisplay(Adafruit_RGBLCDShield *_lcd) {
   lcd = _lcd;

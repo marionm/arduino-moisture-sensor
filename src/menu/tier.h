@@ -2,7 +2,7 @@
 #define _MenuTier_
 
 #include "Adafruit_RGBLCDShield.h"
-#include "MenuEntry.h"
+#include "entry.h"
 
 class MenuTier :
 public MenuEntry {

@@ -1,5 +1,5 @@
 #include "Adafruit_RGBLCDShield.h"
-#include "MenuEntry.h"
+#include "entry.h"
 
 class MenuDisplay {
   public:

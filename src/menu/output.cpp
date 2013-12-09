@@ -1,4 +1,4 @@
-#include "MenuOutput.h"
+#include "output.h"
 
 MenuOutput::MenuOutput(String name, MenuEntry *parent) :
 MenuEntry(name, parent) {

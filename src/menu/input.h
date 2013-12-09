@@ -1,13 +1,13 @@
-#ifndef _MenuOutput_
-#define _MenuOutput_
+#ifndef _MenuInput_
+#define _MenuInput_
 
 #include "Adafruit_RGBLCDShield.h"
-#include "MenuEntry.h"
+#include "entry.h"
 
-class MenuOutput :
+class MenuInput :
 public MenuEntry {
   public:
-    MenuOutput(String name, MenuEntry *parent = NULL);
+    MenuInput(String name, MenuEntry *parent = NULL);
 
     byte type();
     MenuEntry* render(Adafruit_RGBLCDShield *lcd, boolean init = false);

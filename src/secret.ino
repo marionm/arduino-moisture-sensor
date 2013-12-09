@@ -1,12 +1,6 @@
-#include <Wire.h>
+#include <Arduino.h>
 
-#include "Adafruit_MCP23017.h"
-#include "Adafruit_RGBLCDShield.h"
-
-#include "MenuDisplay.h"
-#include "MenuTier.h"
-#include "MenuInput.h"
-#include "MenuOutput.h"
+#include "menu/menu.h"
 
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 MenuDisplay menu = MenuDisplay(&lcd);

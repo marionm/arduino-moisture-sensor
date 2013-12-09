@@ -1,5 +1,5 @@
-#include "MenuEntry.h"
-#include "MenuTier.h"
+#include "entry.h"
+#include "tier.h"
 
 MenuEntry::MenuEntry(String _name, MenuEntry *_parent) {
   name        = _name;
@@ -7,7 +7,7 @@ MenuEntry::MenuEntry(String _name, MenuEntry *_parent) {
   nextSibling = NULL;
   prevSibling = NULL;
 
-  buttonPressed = false;
+  buttonPressed = true;
 
   if(parent && parent->type() == MENU_TIER) {
     ((MenuTier*)parent)->addChild(this);
