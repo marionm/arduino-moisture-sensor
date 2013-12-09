@@ -7,7 +7,7 @@ MenuDisplay menu = MenuDisplay(&lcd);
 
 void setup() {
   MenuTier *home = new MenuTier("Home");
-  new MenuOutput("Check now", home);
+  new MenuOutput("Check now", home, getSecretValue);
 
   MenuTier *settings = new MenuTier("Settings", home);
   new MenuInput("Name",      settings);
@@ -23,11 +23,15 @@ void setup() {
   new MenuInput ("SSID",          wireless);
   new MenuInput ("Username",      wireless);
   new MenuInput ("Password",      wireless);
-  new MenuOutput("Test wireless", wireless);
+  new MenuOutput("Test wireless", wireless, getSecretValue);
 
   menu.enable(home);
 }
 
 void loop() {
   menu.render();
+}
+
+String getSecretValue() {
+  return "TODO";
 }
