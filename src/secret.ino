@@ -4,34 +4,34 @@
 #include "Adafruit_RGBLCDShield.h"
 
 #include "MenuDisplay.h"
-#include "MenuEntry.h"
 #include "MenuTier.h"
+#include "MenuInput.h"
+#include "MenuOutput.h"
 
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 MenuDisplay menu = MenuDisplay(&lcd);
 
 void setup() {
-  MenuTier *menuHome = new MenuTier("Home");
+  MenuTier *home = new MenuTier("Home");
+  new MenuOutput("Check now", home);
 
-  MenuEntry *menuCheckNow = new MenuEntry("Check now", menuHome);
-  MenuTier  *menuSettings = new MenuTier ("Settings",  menuHome);
+  MenuTier *settings = new MenuTier("Settings", home);
+  new MenuInput("Name",      settings);
+  new MenuInput("Threshold", settings);
 
-  MenuEntry *menuSetName       = new MenuEntry("Name",          menuSettings);
-  MenuEntry *menuSetThreshold  = new MenuEntry("Threshold",     menuSettings);
-  MenuTier  *menuNotifications = new MenuTier ("Notifications", menuSettings);
-  MenuTier  *menuWireless      = new MenuTier ("Wireless",      menuSettings);
+  MenuTier *notifications = new MenuTier("Notifications", settings);
+  new MenuInput("E-mail",        notifications);
+  new MenuInput("Phone number",  notifications);
+  new MenuInput("Earliest time", notifications);
+  new MenuInput("Latest time",   notifications);
 
-  MenuEntry *menuSetEmail        = new MenuEntry("E-mail",        menuNotifications);
-  MenuEntry *menuSetPhone        = new MenuEntry("Phone number",  menuNotifications);
-  MenuEntry *menuSetEarliestTime = new MenuEntry("Earliest time", menuNotifications);
-  MenuEntry *menuSetLatestTime   = new MenuEntry("Latest time",   menuNotifications);
+  MenuTier *wireless = new MenuTier("Wireless", settings);
+  new MenuInput ("SSID",          wireless);
+  new MenuInput ("Username",      wireless);
+  new MenuInput ("Password",      wireless);
+  new MenuOutput("Test wireless", wireless);
 
-  MenuEntry *menuSetSSID      = new MenuEntry("SSID",          menuWireless);
-  MenuEntry *menuSetUsername  = new MenuEntry("Username",      menuWireless);
-  MenuEntry *menuSetPassword  = new MenuEntry("Password",      menuWireless);
-  MenuEntry *menuTestWireless = new MenuEntry("Test wireless", menuWireless);
-
-  menu.enable(menuHome);
+  menu.enable(home);
 }
 
 void loop() {

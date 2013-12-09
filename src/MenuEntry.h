@@ -5,22 +5,21 @@
 
 #include "Adafruit_RGBLCDShield.h"
 
-#define MENU_ENTRY 0x0
-#define MENU_TIER  0x1
+#define MENU_TIER   0x0
+#define MENU_INPUT  0x1
+#define MENU_OUTPUT 0x2
 
 class MenuEntry {
   public:
     String name;
     MenuEntry *nextSibling;
     MenuEntry *prevSibling;
-
-    // Actually a MenuTier, but need to avoid circular dependency
     MenuEntry *parent;
 
     MenuEntry(String name, MenuEntry *parent = NULL);
 
-    virtual byte type();
-    virtual MenuEntry* render(Adafruit_RGBLCDShield *lcd, boolean init = false);
+    virtual byte type() = 0;
+    virtual MenuEntry* render(Adafruit_RGBLCDShield *lcd, boolean init = false) = 0;
 
   protected:
     byte pressedButton(Adafruit_RGBLCDShield *lcd);
