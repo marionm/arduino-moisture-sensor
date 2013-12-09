@@ -3,17 +3,28 @@
 
 #include <Arduino.h>
 
+#include "Adafruit_RGBLCDShield.h"
+
+#define MENU_ENTRY 0x0
+#define MENU_TIER  0x1
+
 class MenuEntry {
   public:
     String name;
-    MenuEntry *parent;
     MenuEntry *nextSibling;
     MenuEntry *prevSibling;
-    MenuEntry *child;
 
-    MenuEntry(String name = NULL, MenuEntry *parent = NULL);
+    // Actually a MenuTier, but need to avoid circular dependency
+    MenuEntry *parent;
 
-    void setSibling(MenuEntry *sibling);
+    MenuEntry(String name, MenuEntry *parent = NULL);
+
+    virtual byte type();
+    virtual MenuEntry* render(Adafruit_RGBLCDShield *lcd, boolean init = false);
+
+  protected:
+    byte pressedButton(Adafruit_RGBLCDShield *lcd);
+    boolean buttonPressed;
 };
 
 #endif

@@ -7,13 +7,9 @@ class MenuDisplay {
 
     void enable(MenuEntry *entry);
     void disable();
-    void update();
+    void render();
 
   private:
     Adafruit_RGBLCDShield *lcd;
     MenuEntry *currentEntry;
-    bool buttonPressed;
-
-    void update(byte buttons, MenuEntry *entry);
-    void renderScreen();
 };
