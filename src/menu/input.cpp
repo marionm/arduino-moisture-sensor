@@ -2,10 +2,11 @@
 
 String MenuInput::characters = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*?/\\,.-_=+()[]{}<>\|;:~`'\"";
 
-MenuInput::MenuInput(String name, MenuEntry *parent) :
+MenuInput::MenuInput(String name, MenuEntry *parent, MenuSettings *_settings) :
 MenuEntry(name, parent) {
-  storedValue = " ";
-  editIndex = storedValue.length() - 1;
+  settings       = _settings;
+  storedValue    = settings->getValue();
+  editIndex      = storedValue.length() - 1;
   characterIndex = characters.indexOf(storedValue[storedValue.length() - 1]);
 }
 
@@ -29,7 +30,7 @@ MenuEntry* MenuInput::render(Adafruit_RGBLCDShield *lcd, boolean init) {
   byte button = pressedButton(lcd);
   if(button & BUTTON_SELECT) {
     lcd->noCursor();
-    writeStorage(storedValue);
+    settings->setValue(storedValue);
     return parent;
   }
 
@@ -69,15 +70,6 @@ MenuEntry* MenuInput::render(Adafruit_RGBLCDShield *lcd, boolean init) {
   }
 
   return this;
-}
-
-String MenuInput::readStorage() {
-  // TODO
-  return "";
-}
-
-void MenuInput::writeStorage(String value) {
-  // TODO
 }
 
 inline void MenuInput::writeCharacter(Adafruit_RGBLCDShield *lcd, byte index, char character) {
