@@ -1,13 +1,19 @@
 #include "input.h"
 
-String MenuInput::characters = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*?/\\,.-_=+()[]{}<>\|;:~`'\"";
+String MenuInput::CharacterSets::numeric      = "012345679";
+String MenuInput::CharacterSets::letters      = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ";
+String MenuInput::CharacterSets::alphanumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ";
+String MenuInput::CharacterSets::email        = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-+.@";
+String MenuInput::CharacterSets::full         = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-+.@,!#$%^&*?/\\=()[]{}<>\|;:~`'\" ";
 
-MenuInput::MenuInput(String name, MenuEntry *parent, MenuSettings *_settings) :
+MenuInput::MenuInput(String name, MenuEntry *parent, MenuSettings *_settings, String *_characterSet) :
 MenuEntry(name, parent) {
-  settings       = _settings;
-  storedValue    = settings->getValue();
-  editIndex      = storedValue.length() - 1;
-  characterIndex = characters.indexOf(storedValue[storedValue.length() - 1]);
+  settings    = _settings;
+  storedValue = settings->getValue();
+  editIndex   = storedValue.length() - 1;
+
+  characterSet   = _characterSet;
+  characterIndex = characterSet->indexOf(storedValue[storedValue.length() - 1]);
 }
 
 byte MenuInput::type() {
@@ -43,7 +49,7 @@ MenuEntry* MenuInput::render(Adafruit_RGBLCDShield *lcd, boolean init) {
   }
 
   if(button & BUTTON_RIGHT && editIndex < 15) {
-    char character = characters[characterIndex];
+    char character = characterSet->charAt(characterIndex);
     storedValue = storedValue += character;
     editIndex += 1;
     writeCharacter(lcd, editIndex, character);
@@ -52,19 +58,19 @@ MenuEntry* MenuInput::render(Adafruit_RGBLCDShield *lcd, boolean init) {
   if(button & BUTTON_UP | BUTTON_DOWN) {
     if(button & BUTTON_UP) {
       characterIndex += 1;
-      if(characterIndex >= characters.length()) {
+      if(characterIndex >= characterSet->length()) {
         characterIndex = 0;
       }
     }
 
     if(button & BUTTON_DOWN) {
       if(characterIndex == 0) {
-        characterIndex = characters.length();
+        characterIndex = characterSet->length();
       }
       characterIndex -= 1;
     }
 
-    char character = characters[characterIndex];
+    char character = characterSet->charAt(characterIndex);
     storedValue.setCharAt(storedValue.length() - 1, character);
     writeCharacter(lcd, editIndex, character);
   }
