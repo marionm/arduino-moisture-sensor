@@ -1,18 +1,15 @@
 #include "text_input.h"
 
-String TextMenuInput::CharacterSets::numeric      = "0123456789";
-String TextMenuInput::CharacterSets::alphanumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ";
-String TextMenuInput::CharacterSets::email        = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-+.@";
-String TextMenuInput::CharacterSets::full         = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-+.@,!#$%^&*?/\\=()[]{}<>\|;:~`'\" ";
-
-TextMenuInput::TextMenuInput(String name, MenuEntry *parent, MenuSettings *settings, String _characterSet) :
+TextMenuInput::TextMenuInput(String name, MenuEntry *parent, MenuSettings *settings, byte _characterSet) :
 MenuInput(name, parent, settings) {
-  editIndex      = storedValue.length() - 1;
-  characterSet   = &_characterSet;
-  characterIndex = characterSet->indexOf(storedValue[storedValue.length() - 1]);
-  if(characterIndex == -1) {
-    characterIndex = 0;
+  characterSet = _characterSet;
+
+  if(storedValue == "" || storedValue == " ") {
+    storedValue = String(defaultCharacter());
   }
+
+  editIndex = storedValue.length() - 1;
+  currentCharacter = storedValue.charAt(storedValue.length() - 1);
 }
 
 void TextMenuInput::setupLcd(Adafruit_RGBLCDShield *lcd) {
@@ -27,36 +24,111 @@ void TextMenuInput::teardownLcd(Adafruit_RGBLCDShield *lcd) {
 void TextMenuInput::handleInput(Adafruit_RGBLCDShield *lcd, byte button) {
   if(button & BUTTON_LEFT && editIndex > 0) {
     storedValue = storedValue.substring(0, storedValue.length() - 1);
+    currentCharacter = storedValue.charAt(storedValue.length() - 1);
     lcd->setCursor(editIndex, 1);
-    editIndex -= 1;
     lcd->print(" ");
+    editIndex -= 1;
     lcd->setCursor(editIndex, 1);
   }
 
   if(button & BUTTON_RIGHT && editIndex < 15) {
-    char character = characterSet->charAt(characterIndex);
-    storedValue = storedValue += character;
+    storedValue = storedValue + currentCharacter;
     editIndex += 1;
-    writeCharacter(lcd, editIndex, character);
+    writeCharacter(lcd, editIndex, currentCharacter);
   }
 
   if(button & BUTTON_UP | BUTTON_DOWN) {
     if(button & BUTTON_UP) {
-      characterIndex += 1;
-      if(characterIndex >= characterSet->length()) {
-        characterIndex = 0;
-      }
+      currentCharacter = nextCharacter(currentCharacter);
     }
-
     if(button & BUTTON_DOWN) {
-      if(characterIndex == 0) {
-        characterIndex = characterSet->length();
-      }
-      characterIndex -= 1;
+      currentCharacter = prevCharacter(currentCharacter);
     }
+    storedValue.setCharAt(storedValue.length() - 1, currentCharacter);
+    writeCharacter(lcd, editIndex, currentCharacter);
+  }
+}
 
-    char character = characterSet->charAt(characterIndex);
-    storedValue.setCharAt(storedValue.length() - 1, character);
-    writeCharacter(lcd, editIndex, character);
+char TextMenuInput::nextCharacter(char c) {
+  if(characterSet == NUMERIC_CHARACTER_SET) {
+    switch(c) {
+      case '9': return '0';
+    }
+  } else if(characterSet == ALPHANUMERIC_CHARACTER_SET) {
+    switch(c) {
+      case 'Z': return 'a';
+      case 'z': return '0';
+      case '9': return ' ';
+      case ' ': return 'A';
+    }
+  } else if(characterSet == EMAIL_CHARACTER_SET) {
+    switch(c) {
+      case 'z': return '0';
+      case '9': return '_';
+      case '_': return '-';
+      case '-': return '+';
+      case '+': return '.';
+      case '.': return '@';
+      case '@': return 'a';
+    }
+  } else if(characterSet == FULL_CHARACTER_SET) {
+    switch(c) {
+      case 'Z': return 'a';
+      case 'z': return '0';
+      case '9': return '!';
+      case '/': return ':';
+      case '@': return '[';
+      case '`': return '{';
+      case '~': return ' ';
+      case ' ': return 'A';
+    }
+  }
+  return c + 1;
+}
+
+char TextMenuInput::prevCharacter(char c) {
+  if(characterSet == NUMERIC_CHARACTER_SET) {
+    switch(c) {
+      case '0': return '9';
+    }
+  } else if(characterSet == ALPHANUMERIC_CHARACTER_SET) {
+    switch(c) {
+      case 'A': return ' ';
+      case ' ': return '9';
+      case '0': return 'z';
+      case 'a': return 'Z';
+    }
+  } else if(characterSet == EMAIL_CHARACTER_SET) {
+    switch(c) {
+      case 'a': return '@';
+      case '@': return '.';
+      case '.': return '+';
+      case '+': return '-';
+      case '-': return '_';
+      case '_': return '9';
+      case '0': return 'z';
+    }
+  } else if(characterSet == FULL_CHARACTER_SET) {
+    switch(c) {
+      case 'A': return ' ';
+      case ' ': return '~';
+      case '{': return '`';
+      case '[': return '@';
+      case ':': return '/';
+      case '!': return '9';
+      case '0': return 'z';
+      case 'a': return 'Z';
+    }
+  }
+  return c - 1;
+}
+
+char TextMenuInput::defaultCharacter() {
+  if(characterSet == NUMERIC_CHARACTER_SET) {
+    return '0';
+  } else if(characterSet == EMAIL_CHARACTER_SET) {
+    return 'a';
+  } else {
+    return ' ';
   }
 }

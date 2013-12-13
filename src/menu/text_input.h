@@ -5,19 +5,17 @@
 
 #include "input.h"
 
+#define NUMERIC_CHARACTER_SET      0
+#define ALPHANUMERIC_CHARACTER_SET 1
+#define EMAIL_CHARACTER_SET        2
+#define FULL_CHARACTER_SET         3
+
 class TextMenuInput :
 public MenuInput {
   public:
-    struct CharacterSets {
-      static String numeric;
-      static String alphanumeric;
-      static String email;
-      static String full;
-    };
-
     TextMenuInput(
       String name, MenuEntry *parent, MenuSettings *settings,
-      String characterSet = TextMenuInput::CharacterSets::alphanumeric
+      byte characterSet = ALPHANUMERIC_CHARACTER_SET
     );
 
   protected:
@@ -26,9 +24,13 @@ public MenuInput {
     void handleInput(Adafruit_RGBLCDShield *lcd, byte button);
 
   private:
-    String *characterSet;
-    byte characterIndex;
+    byte characterSet;
     byte editIndex;
+    char currentCharacter;
+
+    char nextCharacter(char character);
+    char prevCharacter(char character);
+    char defaultCharacter();
 };
 
 #endif
