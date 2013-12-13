@@ -22,8 +22,12 @@ class MenuEntry {
     virtual MenuEntry* render(Adafruit_RGBLCDShield *lcd, boolean init = false) = 0;
 
   protected:
-    byte pressedButton(Adafruit_RGBLCDShield *lcd);
     boolean buttonPressed;
+    long buttonHeldAt;
+    byte buttonHoldInterval;
+
+    byte pressedButton(Adafruit_RGBLCDShield *lcd);
+    byte heldButton(Adafruit_RGBLCDShield *lcd);
 };
 
 #endif

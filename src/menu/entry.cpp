@@ -24,3 +24,24 @@ byte MenuEntry::pressedButton(Adafruit_RGBLCDShield *lcd) {
   }
   return NULL;
 }
+
+byte MenuEntry::heldButton(Adafruit_RGBLCDShield *lcd) {
+  byte button = lcd->readButtons();
+  if(button && !buttonPressed) {
+    buttonPressed = true;
+    buttonHeldAt = millis();
+    buttonHoldInterval = 250;
+  } else if(!button){
+    buttonPressed = false;
+    button = NULL;
+  } else {
+    long time = millis();
+    if(time - buttonHeldAt > buttonHoldInterval) {
+      buttonHeldAt = time;
+      buttonHoldInterval = 100;
+    } else {
+      button = NULL;
+    }
+  }
+  return button;
+}

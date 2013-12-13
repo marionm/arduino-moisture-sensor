@@ -30,7 +30,7 @@ MenuEntry* MenuInput::render(Adafruit_RGBLCDShield *lcd, boolean init) {
     setupLcd(lcd);
   }
 
-  byte button = pressedButton(lcd);
+  byte button = heldButton(lcd);
   if(button & BUTTON_SELECT) {
     teardownLcd(lcd);
     settings->setValue(storedValue);
