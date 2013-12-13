@@ -12,7 +12,7 @@
 #define USERNAME_ID  7
 #define PASSWORD_ID  8
 
-#define SETTINGS_CLASS RAMMenuSettings
+#define SETTINGS_CLASS EEPROMMenuSettings
 
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 MenuDisplay menu = MenuDisplay(&lcd);
