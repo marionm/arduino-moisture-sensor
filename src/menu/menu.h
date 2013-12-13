@@ -2,3 +2,5 @@
 #include "tier.h"
 #include "input.h"
 #include "output.h"
+#include "eeprom_settings.h"
+#include "ram_settings.h"
