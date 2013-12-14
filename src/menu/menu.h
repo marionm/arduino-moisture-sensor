@@ -3,5 +3,3 @@
 #include "numeric_input.h"
 #include "text_input.h"
 #include "output.h"
-#include "eeprom_settings.h"
-#include "ram_settings.h"
