@@ -21,7 +21,7 @@ public MenuInput {
   protected:
     void setupLcd(Adafruit_RGBLCDShield *lcd);
     void teardownLcd(Adafruit_RGBLCDShield *lcd);
-    void handleInput(Adafruit_RGBLCDShield *lcd, byte button);
+    void handleInput(Adafruit_RGBLCDShield *lcd, byte pressedButton, byte heldButton);
 
   private:
     byte characterSet;

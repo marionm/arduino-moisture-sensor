@@ -21,8 +21,8 @@ void TextMenuInput::teardownLcd(Adafruit_RGBLCDShield *lcd) {
   lcd->noCursor();
 }
 
-void TextMenuInput::handleInput(Adafruit_RGBLCDShield *lcd, byte button) {
-  if(button & BUTTON_LEFT && editIndex > 0) {
+void TextMenuInput::handleInput(Adafruit_RGBLCDShield *lcd, byte pressedButton, byte heldButton) {
+  if(pressedButton & BUTTON_LEFT && editIndex > 0) {
     storedValue = storedValue.substring(0, storedValue.length() - 1);
     currentCharacter = storedValue.charAt(storedValue.length() - 1);
     lcd->setCursor(editIndex, 1);
@@ -31,17 +31,17 @@ void TextMenuInput::handleInput(Adafruit_RGBLCDShield *lcd, byte button) {
     lcd->setCursor(editIndex, 1);
   }
 
-  if(button & BUTTON_RIGHT && editIndex < 15) {
+  if(pressedButton & BUTTON_RIGHT && editIndex < 15) {
     storedValue = storedValue + currentCharacter;
     editIndex += 1;
     writeCharacter(lcd, editIndex, currentCharacter);
   }
 
-  if(button & BUTTON_UP | BUTTON_DOWN) {
-    if(button & BUTTON_UP) {
+  if(heldButton & BUTTON_UP | BUTTON_DOWN) {
+    if(heldButton & BUTTON_UP) {
       currentCharacter = nextCharacter(currentCharacter);
     }
-    if(button & BUTTON_DOWN) {
+    if(heldButton & BUTTON_DOWN) {
       currentCharacter = prevCharacter(currentCharacter);
     }
     storedValue.setCharAt(storedValue.length() - 1, currentCharacter);

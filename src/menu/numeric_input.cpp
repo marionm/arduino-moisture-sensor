@@ -13,10 +13,10 @@ MenuInput(name, parent, settings) {
   }
 }
 
-void NumericMenuInput::handleInput(Adafruit_RGBLCDShield *lcd, byte button) {
+void NumericMenuInput::handleInput(Adafruit_RGBLCDShield *lcd, byte pressedButton, byte heldButton) {
   boolean change = false;
 
-  if(button & BUTTON_UP) {
+  if(heldButton & BUTTON_UP) {
     if(numericValue == max) {
       numericValue = min;
     } else {
@@ -25,7 +25,7 @@ void NumericMenuInput::handleInput(Adafruit_RGBLCDShield *lcd, byte button) {
     change = true;
   }
 
-  if(button & BUTTON_DOWN) {
+  if(heldButton & BUTTON_DOWN) {
     if(numericValue == 0) {
       numericValue = max;
     } else {
