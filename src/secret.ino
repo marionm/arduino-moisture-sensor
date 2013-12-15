@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+#include "notifier.h"
 #include "menu/menu.h"
 
 #define NAME_ID      0
@@ -15,6 +16,8 @@
 // TODO: Move into menu display directly
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 MenuDisplay menu = MenuDisplay(&lcd);
+
+Notifier notifier = Notifier(NAME_ID, EMAIL_ID, PHONE_ID, EARLIEST_ID, LATEST_ID, SSID_ID, USERNAME_ID, PASSWORD_ID);
 
 // TODO: Use just one shared settings object
 
@@ -43,8 +46,23 @@ void setup() {
 
 void loop() {
   menu.render();
+
+  byte value = getSecretValue().toInt();
+  byte threshold = MenuSettings::getValue(THRESHOLD_ID).toInt();
+  if(value <= threshold) {
+    notifier.sendNotificationIfInWindow();
+  }
 }
 
 String getSecretValue() {
   return "TODO";
+}
+
+String testWireless() {
+  boolean success = notifier.testConnection();
+  if(success) {
+    return "OK";
+  } else {
+    return "Failed";
+  }
 }
