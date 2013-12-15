@@ -13,8 +13,11 @@
 #define USERNAME_ID  7
 #define PASSWORD_ID  8
 
+// TODO: Move into menu display directly
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 MenuDisplay menu = MenuDisplay(&lcd);
+
+// TODO: Use just one shared settings object
 
 void setup() {
   MenuTier *home = new MenuTier("Home");
