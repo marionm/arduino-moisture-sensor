@@ -10,7 +10,7 @@
 class MenuInput :
 public MenuEntry {
   public:
-    MenuInput(String name, MenuEntry *parent, MenuSettings *settings);
+    MenuInput(String name, MenuEntry *parent, byte settingIndex);
 
     byte type();
     MenuEntry* render(Adafruit_RGBLCDShield *lcd, boolean init = false);
@@ -25,7 +25,7 @@ public MenuEntry {
     void writeCharacter(Adafruit_RGBLCDShield *lcd, byte index, char character);
 
   private:
-    MenuSettings *settings;
+    byte settingIndex;
 };
 
 #endif

@@ -1,9 +1,9 @@
 #include "input.h"
 
-MenuInput::MenuInput(String name, MenuEntry *parent, MenuSettings *_settings) :
+MenuInput::MenuInput(String name, MenuEntry *parent, byte _settingIndex) :
 MenuEntry(name, parent) {
-  settings    = _settings;
-  storedValue = settings->getValue();
+  settingIndex = _settingIndex;
+  storedValue  = MenuSettings::getValue(settingIndex);
 }
 
 byte MenuInput::type() {
@@ -33,7 +33,7 @@ MenuEntry* MenuInput::render(Adafruit_RGBLCDShield *lcd, boolean init) {
   byte button = pressedButton(lcd);
   if(button & BUTTON_SELECT) {
     teardownLcd(lcd);
-    settings->setValue(storedValue);
+    MenuSettings::setValue(settingIndex, storedValue);
     return parent;
   }
 

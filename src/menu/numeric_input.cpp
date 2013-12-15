@@ -1,7 +1,7 @@
 #include "numeric_input.h"
 
-NumericMenuInput::NumericMenuInput(String name, MenuEntry *parent, MenuSettings *settings, byte _min, byte _max) :
-MenuInput(name, parent, settings) {
+NumericMenuInput::NumericMenuInput(String name, MenuEntry *parent, byte settingsIndex, byte _min, byte _max) :
+MenuInput(name, parent, settingsIndex) {
   min = _min;
   max = _max;
 
