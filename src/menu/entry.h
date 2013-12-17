@@ -11,12 +11,12 @@
 
 class MenuEntry {
   public:
-    String name;
+    __FlashStringHelper *name;
     MenuEntry *nextSibling;
     MenuEntry *prevSibling;
     MenuEntry *parent;
 
-    MenuEntry(String name, MenuEntry *parent = NULL);
+    MenuEntry(__FlashStringHelper *name, MenuEntry *parent = NULL);
 
     virtual byte type() = 0;
     virtual MenuEntry* render(Adafruit_RGBLCDShield *lcd, boolean init = false) = 0;

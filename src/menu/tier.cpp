@@ -1,6 +1,6 @@
 #include "tier.h"
 
-MenuTier::MenuTier(String name, MenuEntry *parent) :
+MenuTier::MenuTier(__FlashStringHelper *name, MenuEntry *parent) :
 MenuEntry(name, parent) {
   headChild    = NULL;
   currentChild = NULL;

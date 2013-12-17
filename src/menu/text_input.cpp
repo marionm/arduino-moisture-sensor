@@ -1,6 +1,6 @@
 #include "text_input.h"
 
-TextMenuInput::TextMenuInput(String name, MenuEntry *parent, byte settingsIndex, byte _characterSet) :
+TextMenuInput::TextMenuInput(__FlashStringHelper *name, MenuEntry *parent, byte settingsIndex, byte _characterSet) :
 MenuInput(name, parent, settingsIndex) {
   characterSet = _characterSet;
 

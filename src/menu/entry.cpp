@@ -1,7 +1,7 @@
 #include "entry.h"
 #include "tier.h"
 
-MenuEntry::MenuEntry(String _name, MenuEntry *_parent) {
+MenuEntry::MenuEntry(__FlashStringHelper *_name, MenuEntry *_parent) {
   name        = _name;
   parent      = _parent;
   nextSibling = NULL;

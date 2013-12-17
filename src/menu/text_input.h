@@ -14,7 +14,7 @@ class TextMenuInput :
 public MenuInput {
   public:
     TextMenuInput(
-      String name, MenuEntry *parent, byte settingsIndex,
+      __FlashStringHelper *name, MenuEntry *parent, byte settingsIndex,
       byte characterSet = ALPHANUMERIC_CHARACTER_SET
     );
 

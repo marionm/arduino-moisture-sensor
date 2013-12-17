@@ -1,6 +1,6 @@
 #include "output.h"
 
-MenuOutput::MenuOutput(String name, MenuEntry *parent, String (*valueFunction)()) :
+MenuOutput::MenuOutput(__FlashStringHelper *name, MenuEntry *parent, String (*valueFunction)()) :
 MenuEntry(name, parent) {
   value    = NULL;
   getValue = valueFunction;

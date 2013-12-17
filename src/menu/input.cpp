@@ -1,6 +1,6 @@
 #include "input.h"
 
-MenuInput::MenuInput(String name, MenuEntry *parent, byte _settingIndex) :
+MenuInput::MenuInput(__FlashStringHelper *name, MenuEntry *parent, byte _settingIndex) :
 MenuEntry(name, parent) {
   settingIndex = _settingIndex;
   storedValue  = MenuSettings::getValue(settingIndex);

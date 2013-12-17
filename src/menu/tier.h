@@ -7,7 +7,7 @@
 class MenuTier :
 public MenuEntry {
   public:
-    MenuTier(String name, MenuEntry *parent = NULL);
+    MenuTier(__FlashStringHelper *name, MenuEntry *parent = NULL);
 
     byte type();
     MenuEntry* render(Adafruit_RGBLCDShield *lcd, boolean init = false);
