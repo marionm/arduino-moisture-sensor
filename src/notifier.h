@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 
+#include "Adafruit_RGBLCDShield.h"
 #include "Adafruit_CC3000.h"
 
 class Notifier {
@@ -18,7 +19,7 @@ class Notifier {
     );
     ~Notifier();
 
-    boolean testConnection();
+    boolean testConnection(Adafruit_RGBLCDShield *lcd = NULL);
     void sendNotificationIfInWindow();
 
   private:
@@ -33,7 +34,7 @@ class Notifier {
     boolean connected;
 
     byte inNotificationWindow();
-    void connect();
+    byte connect();
     void disconnect();
 };
 

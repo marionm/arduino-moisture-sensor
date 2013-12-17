@@ -12,13 +12,10 @@
 #define SSID_ID      6
 #define PASSWORD_ID  8
 
-// TODO: Move into menu display directly
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 MenuDisplay menu = MenuDisplay(&lcd);
 
 Notifier notifier = Notifier(NAME_ID, EMAIL_ID, PHONE_ID, EARLIEST_ID, LATEST_ID, SSID_ID, PASSWORD_ID);
-
-// TODO: Use just one shared settings object
 
 void setup() {
   MenuTier *home = new MenuTier(F("Home"));
@@ -48,7 +45,7 @@ void loop() {
   byte value = getSecretValue().toInt();
   byte threshold = MenuSettings::getValue(THRESHOLD_ID).toInt();
   if(value <= threshold) {
-    notifier.sendNotificationIfInWindow();
+    // notifier.sendNotificationIfInWindow();
   }
 }
 
@@ -57,10 +54,11 @@ String getSecretValue() {
 }
 
 String testWireless() {
-  boolean success = notifier.testConnection();
+  boolean success = notifier.testConnection(&lcd);
   if(success) {
     return "OK";
   } else {
     return "Failed";
   }
+  return "Failed";
 }
