@@ -14,7 +14,6 @@ class Notifier {
       byte earliestTimeSettingsIndex,
       byte latestTimeSettingsIndex,
       byte ssidSettingsIndex,
-      byte usernameSettingsIndex,
       byte passwordSettingsIndex
     );
     ~Notifier();
@@ -30,7 +29,6 @@ class Notifier {
     byte earliestTimeSettingsIndex;
     byte latestTimeSettingsIndex;
     byte ssidSettingsIndex;
-    byte usernameSettingsIndex;
     byte passwordSettingsIndex;
     boolean connected;
 

@@ -12,7 +12,6 @@ Notifier::Notifier(
   byte _earliestTimeSettingsIndex,
   byte _latestTimeSettingsIndex,
   byte _ssidSettingsIndex,
-  byte _usernameSettingsIndex,
   byte _passwordSettingsIndex
 ) {
   nameSettingsIndex         = _nameSettingsIndex;
@@ -21,7 +20,6 @@ Notifier::Notifier(
   earliestTimeSettingsIndex = _earliestTimeSettingsIndex;
   latestTimeSettingsIndex   = _latestTimeSettingsIndex;
   ssidSettingsIndex         = _ssidSettingsIndex;
-  usernameSettingsIndex     = _usernameSettingsIndex;
   passwordSettingsIndex     = _passwordSettingsIndex;
 
   byte csPin   = 10;

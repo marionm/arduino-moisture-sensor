@@ -10,14 +10,13 @@
 #define EARLIEST_ID  4
 #define LATEST_ID    5
 #define SSID_ID      6
-#define USERNAME_ID  7
 #define PASSWORD_ID  8
 
 // TODO: Move into menu display directly
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 MenuDisplay menu = MenuDisplay(&lcd);
 
-Notifier notifier = Notifier(NAME_ID, EMAIL_ID, PHONE_ID, EARLIEST_ID, LATEST_ID, SSID_ID, USERNAME_ID, PASSWORD_ID);
+Notifier notifier = Notifier(NAME_ID, EMAIL_ID, PHONE_ID, EARLIEST_ID, LATEST_ID, SSID_ID, PASSWORD_ID);
 
 // TODO: Use just one shared settings object
 
@@ -37,7 +36,6 @@ void setup() {
 
   MenuTier *wireless = new MenuTier("Wireless", settings);
   new TextMenuInput ("SSID",          wireless, SSID_ID,     FULL_CHARACTER_SET);
-  new TextMenuInput ("Username",      wireless, USERNAME_ID, FULL_CHARACTER_SET);
   new TextMenuInput ("Password",      wireless, PASSWORD_ID, FULL_CHARACTER_SET);
   new MenuOutput    ("Test wireless", wireless, testWireless);
 
