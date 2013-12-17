@@ -19,7 +19,7 @@ Notifier notifier = Notifier(NAME_ID, EMAIL_ID, PHONE_ID, EARLIEST_ID, LATEST_ID
 
 void setup() {
   MenuTier *home = new MenuTier(F("Home"));
-  new MenuOutput(F("Check now"), home, getSecretValue);
+  new MenuOutput(F("Check now"), home, printSecretValue);
 
   MenuTier *settings = new MenuTier(F("Settings"), home);
   new TextMenuInput   (F("Name"),      settings, NAME_ID);
@@ -53,12 +53,14 @@ String getSecretValue() {
   return "TODO";
 }
 
-String testWireless() {
-  boolean success = notifier.testConnection(&lcd);
-  if(success) {
-    return "OK";
-  } else {
-    return "Failed";
-  }
-  return "Failed";
+void printSecretValue(Adafruit_RGBLCDShield *lcd) {
+  lcd->clear();
+  lcd->setCursor(0, 0);
+  lcd->print(getSecretValue());
+}
+
+void testWireless(Adafruit_RGBLCDShield *lcd) {
+  lcd->clear();
+  lcd->setCursor(0, 0);
+  lcd->print(F("TODO"));
 }

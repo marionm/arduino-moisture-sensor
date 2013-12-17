@@ -1,9 +1,8 @@
 #include "output.h"
 
-MenuOutput::MenuOutput(__FlashStringHelper *name, MenuEntry *parent, String (*valueFunction)()) :
+MenuOutput::MenuOutput(__FlashStringHelper *name, MenuEntry *parent, void (*_getAndPrintValue)(Adafruit_RGBLCDShield *lcd)) :
 MenuEntry(name, parent) {
-  value    = NULL;
-  getValue = valueFunction;
+  getAndPrintValue = _getAndPrintValue;
 }
 
 byte MenuOutput::type() {
@@ -14,9 +13,7 @@ MenuEntry* MenuOutput::render(Adafruit_RGBLCDShield *lcd, boolean init) {
   byte button = pressedButton(lcd);
 
   if(button & BUTTON_SELECT || init) {
-    value = getValue();
-    lcd->clear();
-    lcd->print(value);
+    getAndPrintValue(lcd);
   } else if(button & BUTTON_LEFT && parent) {
     return parent;
   }
