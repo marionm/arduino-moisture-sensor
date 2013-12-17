@@ -62,5 +62,18 @@ void printSecretValue(Adafruit_RGBLCDShield *lcd) {
 void testWireless(Adafruit_RGBLCDShield *lcd) {
   lcd->clear();
   lcd->setCursor(0, 0);
-  lcd->print(F("TODO"));
+  lcd->print(F("Connecting..."));
+
+  char result[16];
+  boolean success = notifier.testConnection(result);
+
+  lcd->clear();
+  lcd->setCursor(0, 0);
+  if(success) {
+    lcd->print(F("Connected"));
+  } else {
+    lcd->print(F("Failed"));
+  }
+  lcd->setCursor(0, 1);
+  lcd->print(result);
 }

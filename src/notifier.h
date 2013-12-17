@@ -19,7 +19,7 @@ class Notifier {
     );
     ~Notifier();
 
-    boolean testConnection(Adafruit_RGBLCDShield *lcd = NULL);
+    boolean testConnection(char resultMessage[16]);
     void sendNotificationIfInWindow();
 
   private:

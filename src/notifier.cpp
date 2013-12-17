@@ -33,45 +33,45 @@ Notifier::~Notifier() {
   delete wifi;
 }
 
-boolean Notifier::testConnection(Adafruit_RGBLCDShield *lcd) {
-  if(lcd) {
-    lcd->clear();
-    lcd->setCursor(0, 0);
-    lcd->print(F("Connecting..."));
-  }
-
+boolean Notifier::testConnection(char resultMessage[16]) {
   byte result = connect();
 
-  if(lcd) {
-    lcd->clear();
-    lcd->setCursor(0, 0);
-
-    if(result == 0) {
-      uint32_t addr, netmask, gateway, dhcpServer, dnsServer;
-      wifi->getIPAddress(&addr, &netmask, &gateway, &dhcpServer, &dnsServer);
-
-      lcd->print(F("Success!"));
-      lcd->setCursor(0, 1);
-      lcd->print(addr);
-    } else {
-      lcd->print(F("Failed"));
-      lcd->setCursor(0, 1);
-      if(result == 1) {
-        lcd->print(F("Board init error"));
-      } else if(result == 2) {
-        lcd->print(F("Couldn't connect"));
-      } else if(result == 3) {
-        lcd->print(F("DCHP timeout"));
-      } else if(result == 4) {
-        lcd->print(F("Unknown reason"));
+  switch(result) {
+    case 0:
+      uint32_t addr, netmask, gateway, dhcpserv, dnsserv;
+      if(wifi->getIPAddress(&addr, &netmask, &gateway, &dhcpserv, &dnsserv)) {
+        String ip = String((byte)(addr >> 24)) +
+          "." + String((byte)(addr >> 16)) +
+          "." + String((byte)(addr >> 8)) +
+          "." + String((byte)(addr));
+        ip.toCharArray(resultMessage, ip.length() + 1);
+      } else {
+        strcpy(resultMessage, "No IP address");
+        result = 5;
       }
-    }
+      break;
+    case 1:
+      strcpy(resultMessage, "Board init error");
+      break;
+    case 2:
+      strcpy(resultMessage, "Couldn't reset");
+      break;
+    case 3:
+      strcpy(resultMessage, "Couldn't connect");
+      break;
+    case 4:
+      strcpy(resultMessage, "DHCP timeout");
+      break;
+    default:
+      strcpy(resultMessage, "Unknown error");
+      break;
   }
-  // TODO
-  boolean success = false;
 
-  disconnect();
-  return success;
+  if(connected) {
+    disconnect();
+  }
+
+  return result == 0;
 }
 
 void Notifier::sendNotificationIfInWindow() {
@@ -100,24 +100,27 @@ byte Notifier::connect() {
   if(!wifi->begin()) {
     return 1;
   }
+
   if(!wifi->deleteProfiles()) {
     return 2;
   }
 
   String ssidString = MenuSettings::getValue(ssidSettingsIndex);
   char ssid[ssidString.length() + 1];
-  ssidString.toCharArray(ssid, 0, ssidString.length());
+  ssidString.toCharArray(ssid, ssidString.length() + 1);
+
   String passwordString = MenuSettings::getValue(passwordSettingsIndex);
   char password[passwordString.length() + 1];
-  passwordString.toCharArray(ssid, 0, passwordString.length());
-  byte security   = WLAN_SEC_WPA2;
-  if(!wifi->connectToAP(ssid, password, security)) {
+  passwordString.toCharArray(password, passwordString.length() + 1);
+
+  byte security = WLAN_SEC_WPA2;
+  byte connectedToAP = wifi->connectToAP(ssid, password, security);
+  if(!connectedToAP) {
     return 3;
   }
 
-  long startTime = millis();
-  long timeout   = 60000;
-  while(!wifi->checkDHCP() && (millis() - startTime) < timeout);
+  long time = millis();
+  while(!wifi->checkDHCP() && (millis() - time) < 60000L);
   if(!wifi->checkDHCP()) {
     return 4;
   }
