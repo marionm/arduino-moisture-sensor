@@ -2,6 +2,7 @@
 
 #include <SPI.h>
 
+#include "credentials.h"
 #include "menu/settings.h"
 
 Notifier::Notifier(
@@ -74,14 +75,16 @@ boolean Notifier::testConnection(char resultMessage[16]) {
   return result == 0;
 }
 
-void Notifier::sendNotificationIfInWindow() {
+void Notifier::sendNotificationsIfInWindow() {
+  boolean disconnectNow = false;
   if(inNotificationWindow()) {
     if(!connected) {
       connect();
+      disconnectNow = true;
     }
   }
 
-  if(connected) {
+  if(disconnectNow) {
     disconnect();
   }
 }
@@ -94,6 +97,60 @@ boolean Notifier::inNotificationWindow() {
   byte hour = 12;
 
   return hour >= earliest.toInt() && hour <= latest.toInt();
+}
+
+void Notifier::sendEmail() {
+  boolean disconnectNow = false;
+  if(!connected) {
+    connect();
+    disconnectNow = true;
+  }
+
+  unsigned long ip;
+  wifi->getHostByName("smtpcorp.com", &ip);
+
+  long startTime = millis();
+  Adafruit_CC3000_Client client;
+  do {
+    client = wifi->connectTCP(ip, 2525);
+  } while(!client.connected() && (millis() - startTime) < 5000L);
+
+  if(client.connected()) {
+    // TODO: Support input > 16 characters and drop hardcoded @gmail.com
+    String name  = MenuSettings::getValue(nameSettingsIndex);
+    String email = MenuSettings::getValue(emailSettingsIndex);
+    client.print(F("helo 192.168.1.1\r\n"));
+
+    client.print(String("MAIL From: <") + SMTP2GO_EMAIL + ">\r\n");
+    client.print("RCPT To: <" + email + "@gmail.com>\r\n");
+    client.print(F("DATA\r\n"));
+    client.print(String("From:Secret Project <") + SMTP2GO_EMAIL + ">\r\n");
+    client.print("To:<" + email + "@gmail.com>\r\n");
+
+    client.print("Subject:" + name + "\r\n");
+    client.print(name + "\r\n");
+
+    client.print(F(".\r\n"));
+    client.print(F("QUIT\r\n"));
+  }
+
+  if(disconnectNow) {
+    disconnect();
+  }
+}
+
+void Notifier::sendText() {
+  boolean disconnectNow = false;
+  if(!connected) {
+    connect();
+    disconnectNow = true;
+  }
+
+  // TODO
+
+  if(disconnectNow) {
+    disconnect();
+  }
 }
 
 byte Notifier::connect() {

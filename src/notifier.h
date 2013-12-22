@@ -20,7 +20,9 @@ class Notifier {
     ~Notifier();
 
     boolean testConnection(char resultMessage[16]);
-    void sendNotificationIfInWindow();
+    void sendNotificationsIfInWindow();
+    void sendEmail();
+    void sendText();
 
   private:
     Adafruit_CC3000 *wifi;
