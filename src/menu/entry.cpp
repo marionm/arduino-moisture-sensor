@@ -22,7 +22,7 @@ byte MenuEntry::pressedButton(Adafruit_RGBLCDShield *lcd) {
   } else if(!button){
     buttonPressed = false;
   }
-  return NULL;
+  return 0;
 }
 
 byte MenuEntry::heldButton(Adafruit_RGBLCDShield *lcd) {

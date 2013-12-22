@@ -2,20 +2,12 @@
 
 #include "notifier.h"
 #include "menu/menu.h"
-
-#define NAME_ID      0
-#define THRESHOLD_ID 1
-#define EMAIL_ID     2
-#define PHONE_ID     3
-#define EARLIEST_ID  4
-#define LATEST_ID    5
-#define SSID_ID      6
-#define PASSWORD_ID  8
+#include "settings.h"
 
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 MenuDisplay menu = MenuDisplay(&lcd);
 
-Notifier notifier = Notifier(NAME_ID, EMAIL_ID, PHONE_ID, EARLIEST_ID, LATEST_ID, SSID_ID, PASSWORD_ID);
+Notifier notifier = Notifier();
 
 void setup() {
   MenuTier *home = new MenuTier(F("Home"));

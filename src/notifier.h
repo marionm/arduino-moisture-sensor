@@ -8,15 +8,7 @@
 
 class Notifier {
   public:
-    Notifier(
-      byte nameSettingsIndex,
-      byte emailSettingsIndex,
-      byte phoneSettingsIndex,
-      byte earliestTimeSettingsIndex,
-      byte latestTimeSettingsIndex,
-      byte ssidSettingsIndex,
-      byte passwordSettingsIndex
-    );
+    Notifier();
     ~Notifier();
 
     boolean testConnection(char resultMessage[16]);
@@ -26,13 +18,6 @@ class Notifier {
 
   private:
     Adafruit_CC3000 *wifi;
-    byte nameSettingsIndex;
-    byte emailSettingsIndex;
-    byte phoneSettingsIndex;
-    byte earliestTimeSettingsIndex;
-    byte latestTimeSettingsIndex;
-    byte ssidSettingsIndex;
-    byte passwordSettingsIndex;
     boolean connected;
 
     byte inNotificationWindow();

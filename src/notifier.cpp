@@ -4,24 +4,9 @@
 
 #include "credentials.h"
 #include "menu/settings.h"
+#include "settings.h"
 
-Notifier::Notifier(
-  byte _nameSettingsIndex,
-  byte _emailSettingsIndex,
-  byte _phoneSettingsIndex,
-  byte _earliestTimeSettingsIndex,
-  byte _latestTimeSettingsIndex,
-  byte _ssidSettingsIndex,
-  byte _passwordSettingsIndex
-) {
-  nameSettingsIndex         = _nameSettingsIndex;
-  emailSettingsIndex        = _emailSettingsIndex;
-  phoneSettingsIndex        = _phoneSettingsIndex;
-  earliestTimeSettingsIndex = _earliestTimeSettingsIndex;
-  latestTimeSettingsIndex   = _latestTimeSettingsIndex;
-  ssidSettingsIndex         = _ssidSettingsIndex;
-  passwordSettingsIndex     = _passwordSettingsIndex;
-
+Notifier::Notifier() {
   byte csPin   = 10;
   byte irqPin  =  3;
   byte vbatPin =  5;
@@ -90,8 +75,8 @@ void Notifier::sendNotificationsIfInWindow() {
 }
 
 boolean Notifier::inNotificationWindow() {
-  String earliest = MenuSettings::getValue(earliestTimeSettingsIndex);
-  String latest   = MenuSettings::getValue(latestTimeSettingsIndex);
+  String earliest = MenuSettings::getValue(EARLIEST_ID);
+  String latest   = MenuSettings::getValue(LATEST_ID);
 
   // TODO
   byte hour = 12;
@@ -117,8 +102,8 @@ void Notifier::sendEmail() {
 
   if(client.connected()) {
     // TODO: Support input > 16 characters and drop hardcoded @gmail.com
-    String name  = MenuSettings::getValue(nameSettingsIndex);
-    String email = MenuSettings::getValue(emailSettingsIndex);
+    String name  = MenuSettings::getValue(NAME_ID);
+    String email = MenuSettings::getValue(EMAIL_ID);
     client.print(F("helo 192.168.1.1\r\n"));
 
     client.print(String("MAIL From: <") + SMTP2GO_EMAIL + ">\r\n");
@@ -162,11 +147,11 @@ byte Notifier::connect() {
     return 2;
   }
 
-  String ssidString = MenuSettings::getValue(ssidSettingsIndex);
+  String ssidString = MenuSettings::getValue(SSID_ID);
   char ssid[ssidString.length() + 1];
   ssidString.toCharArray(ssid, ssidString.length() + 1);
 
-  String passwordString = MenuSettings::getValue(passwordSettingsIndex);
+  String passwordString = MenuSettings::getValue(PASSWORD_ID);
   char password[passwordString.length() + 1];
   passwordString.toCharArray(password, passwordString.length() + 1);
 
