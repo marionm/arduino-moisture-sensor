@@ -3,7 +3,7 @@
 MenuInput::MenuInput(__FlashStringHelper *name, MenuEntry *parent, byte _settingIndex) :
 MenuEntry(name, parent) {
   settingIndex = _settingIndex;
-  storedValue  = MenuSettings::getValue(settingIndex);
+  strcpy(storedValue, MenuSettings::getValue(settingIndex));
 }
 
 byte MenuInput::type() {
@@ -40,10 +40,4 @@ MenuEntry* MenuInput::render(Adafruit_RGBLCDShield *lcd, boolean init) {
   handleInput(lcd, button, heldButton(lcd));
 
   return this;
-}
-
-void MenuInput::writeCharacter(Adafruit_RGBLCDShield *lcd, byte index, char character) {
-  lcd->setCursor(index, 1);
-  lcd->print(character);
-  lcd->setCursor(index, 1);
 }

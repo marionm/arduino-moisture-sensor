@@ -1,46 +1,43 @@
 #include "numeric_input.h"
+#include "util.h"
 
 NumericMenuInput::NumericMenuInput(__FlashStringHelper *name, MenuEntry *parent, byte settingsIndex, byte _min, byte _max) :
 MenuInput(name, parent, settingsIndex) {
   min = _min;
   max = _max;
 
-  if(storedValue == "" || storedValue == " ") {
-    numericValue = 0;
-    storedValue = "0";
-  } else {
-    numericValue = storedValue.toInt();
+  if(strcmp(storedValue, "") == 0 || strcmp(storedValue, " ") == 0) {
+    strcpy(storedValue, MenuUtil::byteToString(min));
   }
 }
 
 void NumericMenuInput::handleInput(Adafruit_RGBLCDShield *lcd, byte pressedButton, byte heldButton) {
-  boolean change = false;
+  if(heldButton & (BUTTON_UP | BUTTON_DOWN)) {
+    byte numericValue = MenuUtil::stringToByte(storedValue);
 
-  if(heldButton & BUTTON_UP) {
-    if(numericValue == max) {
-      numericValue = min;
-    } else {
-      numericValue++;
+    if(heldButton & BUTTON_UP) {
+      if(numericValue == max) {
+        numericValue = min;
+      } else {
+        numericValue++;
+      }
     }
-    change = true;
-  }
 
-  if(heldButton & BUTTON_DOWN) {
-    if(numericValue == 0) {
-      numericValue = max;
-    } else {
-      numericValue--;
+    if(heldButton & BUTTON_DOWN) {
+      if(numericValue == 0) {
+        numericValue = max;
+      } else {
+        numericValue--;
+      }
     }
-    change = true;
-  }
 
-  if(change) {
+    strcpy(storedValue, MenuUtil::byteToString(numericValue));
+
     lcd->setCursor(0, 1);
-    for(byte i = 0; i < String(max).length(); i++) {
+    for(byte i = 0; i < (max / 10 + 1); i++) {
       lcd->print(" ");
     }
     lcd->setCursor(0, 1);
-    lcd->print(numericValue);
-    storedValue = String(numericValue);
+    lcd->print(storedValue);
   }
 }

@@ -4,3 +4,4 @@
 #include "text_input.h"
 #include "output.h"
 #include "settings.h"
+#include "util.h"

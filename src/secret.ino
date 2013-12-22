@@ -10,6 +10,7 @@ MenuDisplay menu = MenuDisplay(&lcd);
 Notifier notifier = Notifier();
 
 void setup() {
+  // TODO: Save memory by allocating children on demand (on stack?), not all up front
   MenuTier *home = new MenuTier(F("Home"));
   new MenuOutput(F("Check now"), home, printSecretValue);
 
@@ -34,14 +35,14 @@ void setup() {
 void loop() {
   menu.render();
 
-  byte value = getSecretValue().toInt();
-  byte threshold = MenuSettings::getValue(THRESHOLD_ID).toInt();
-  if(value <= threshold) {
-    // notifier.sendNotificationIfInWindow();
-  }
+  // byte value = MenuUtil::stringToByte(getSecretValue());
+  // byte threshold = MenuUtil::stringToByte(MenuSettings::getValue(THRESHOLD_ID));
+  // if(value <= threshold) {
+  //   notifier.sendNotificationIfInWindow();
+  // }
 }
 
-String getSecretValue() {
+char* getSecretValue() {
   return "TODO";
 }
 
@@ -56,7 +57,7 @@ void testWireless(Adafruit_RGBLCDShield *lcd) {
   lcd->setCursor(0, 0);
   lcd->print(F("Connecting..."));
 
-  char result[16];
+  char result[17];
   boolean success = notifier.testConnection(result);
 
   lcd->clear();

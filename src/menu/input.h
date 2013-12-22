@@ -16,13 +16,11 @@ public MenuEntry {
     MenuEntry* render(Adafruit_RGBLCDShield *lcd, boolean init = false);
 
   protected:
-    String storedValue;
+    char storedValue[MENU_STORAGE_SIZE];
 
     virtual void setupLcd(Adafruit_RGBLCDShield *lcd);
     virtual void teardownLcd(Adafruit_RGBLCDShield *lcd);
     virtual void handleInput(Adafruit_RGBLCDShield *lcd, byte pressedButton, byte heldButton) = 0;
-
-    void writeCharacter(Adafruit_RGBLCDShield *lcd, byte index, char character);
 
   private:
     byte settingIndex;

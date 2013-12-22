@@ -31,6 +31,7 @@ public MenuInput {
     char nextCharacter(char character);
     char prevCharacter(char character);
     char defaultCharacter();
+    void writeCharacter(Adafruit_RGBLCDShield *lcd, byte index, char character);
 };
 
 #endif

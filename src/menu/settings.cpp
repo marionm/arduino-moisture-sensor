@@ -2,10 +2,10 @@
 
 #include "settings.h"
 
-String MenuSettings::getValue(byte blockIndex) {
+char *MenuSettings::getValue(byte blockIndex, boolean log) {
   byte index = memoryIndex(blockIndex);
 
-  String value;
+  char value[17];
 
   char character = 255;
   byte i = 0;
@@ -14,24 +14,19 @@ String MenuSettings::getValue(byte blockIndex) {
     if(character < 32 || character > 126) {
       break;
     }
-    value += character;
+    value[i] = character;
   }
 
-  if(character != 0) {
-    // No end of line character, not a real value
-    return "";
-  } else {
-    return value;
-  }
+  value[i] = '\0';
+  return value;
 }
 
-void MenuSettings::setValue(byte blockIndex, String value) {
+void MenuSettings::setValue(byte blockIndex, char *value) {
+  if(strcmp(value, getValue(blockIndex, false)) == 0) return;
+
   byte index = memoryIndex(blockIndex);
-
-  if(value == getValue(blockIndex)) return;
-
   byte i = 0;
-  for(; i < MENU_STORAGE_SIZE - 1 && i < value.length(); i++) {
+  for(; i < MENU_STORAGE_SIZE - 1 && i < strlen(value); i++) {
     EEPROM.write(index + i, value[i]);
   }
   EEPROM.write(index + i, 0);

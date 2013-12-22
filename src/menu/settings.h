@@ -8,8 +8,8 @@
 
 class MenuSettings {
   public:
-    static String getValue(byte blockIndex);
-    static void setValue(byte blockIndex, String value);
+    static char* getValue(byte blockIndex, boolean log = true);
+    static void setValue(byte blockIndex, char *value);
 
   private:
     static byte memoryIndex(byte blockIndex);

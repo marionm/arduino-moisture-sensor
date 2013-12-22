@@ -5,11 +5,12 @@ MenuInput(name, parent, settingsIndex) {
   characterSet = _characterSet;
 
   if(storedValue == "" || storedValue == " ") {
-    storedValue = String(defaultCharacter());
+    storedValue[0] = defaultCharacter();
+    storedValue[1] = '\0';
   }
 
-  editIndex = storedValue.length() - 1;
-  currentCharacter = storedValue.charAt(storedValue.length() - 1);
+  editIndex = strlen(storedValue) - 1;
+  currentCharacter = storedValue[editIndex];
 }
 
 void TextMenuInput::setupLcd(Adafruit_RGBLCDShield *lcd) {
@@ -23,17 +24,19 @@ void TextMenuInput::teardownLcd(Adafruit_RGBLCDShield *lcd) {
 
 void TextMenuInput::handleInput(Adafruit_RGBLCDShield *lcd, byte pressedButton, byte heldButton) {
   if(pressedButton & BUTTON_LEFT && editIndex > 0) {
-    storedValue = storedValue.substring(0, storedValue.length() - 1);
-    currentCharacter = storedValue.charAt(storedValue.length() - 1);
     lcd->setCursor(editIndex, 1);
     lcd->print(" ");
+    storedValue[editIndex] = '\0';
+
     editIndex -= 1;
+    currentCharacter = storedValue[editIndex];
     lcd->setCursor(editIndex, 1);
   }
 
   if(pressedButton & BUTTON_RIGHT && editIndex < 15) {
-    storedValue = storedValue + currentCharacter;
     editIndex += 1;
+    storedValue[editIndex] = currentCharacter;
+    storedValue[editIndex + 1] = '\0';
     writeCharacter(lcd, editIndex, currentCharacter);
   }
 
@@ -44,7 +47,7 @@ void TextMenuInput::handleInput(Adafruit_RGBLCDShield *lcd, byte pressedButton, 
     if(heldButton & BUTTON_DOWN) {
       currentCharacter = prevCharacter(currentCharacter);
     }
-    storedValue.setCharAt(storedValue.length() - 1, currentCharacter);
+    storedValue[editIndex] = currentCharacter;
     writeCharacter(lcd, editIndex, currentCharacter);
   }
 }
@@ -131,4 +134,10 @@ char TextMenuInput::defaultCharacter() {
   } else {
     return ' ';
   }
+}
+
+void TextMenuInput::writeCharacter(Adafruit_RGBLCDShield *lcd, byte index, char character) {
+  lcd->setCursor(index, 1);
+  lcd->print(character);
+  lcd->setCursor(index, 1);
 }

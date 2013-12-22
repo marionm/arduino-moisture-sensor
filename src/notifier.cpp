@@ -4,6 +4,7 @@
 
 #include "credentials.h"
 #include "menu/settings.h"
+#include "menu/util.h"
 #include "settings.h"
 
 Notifier::Notifier() {
@@ -19,18 +20,14 @@ Notifier::~Notifier() {
   delete wifi;
 }
 
-boolean Notifier::testConnection(char resultMessage[16]) {
+boolean Notifier::testConnection(char resultMessage[17]) {
   byte result = connect();
 
   switch(result) {
     case 0:
       uint32_t addr, netmask, gateway, dhcpserv, dnsserv;
       if(wifi->getIPAddress(&addr, &netmask, &gateway, &dhcpserv, &dnsserv)) {
-        String ip = String((byte)(addr >> 24)) +
-          "." + String((byte)(addr >> 16)) +
-          "." + String((byte)(addr >> 8)) +
-          "." + String((byte)(addr));
-        ip.toCharArray(resultMessage, ip.length() + 1);
+        strcpy(resultMessage, "IP acquired");
       } else {
         strcpy(resultMessage, "No IP address");
         result = 5;
@@ -75,13 +72,13 @@ void Notifier::sendNotificationsIfInWindow() {
 }
 
 boolean Notifier::inNotificationWindow() {
-  String earliest = MenuSettings::getValue(EARLIEST_ID);
-  String latest   = MenuSettings::getValue(LATEST_ID);
+  byte earliest = MenuUtil::stringToByte(MenuSettings::getValue(EARLIEST_ID));
+  byte latest   = MenuUtil::stringToByte(MenuSettings::getValue(LATEST_ID));
 
   // TODO
   byte hour = 12;
 
-  return hour >= earliest.toInt() && hour <= latest.toInt();
+  return hour >= earliest && hour <= latest;
 }
 
 void Notifier::sendEmail() {
@@ -102,18 +99,21 @@ void Notifier::sendEmail() {
 
   if(client.connected()) {
     // TODO: Support input > 16 characters and drop hardcoded @gmail.com
-    String name  = MenuSettings::getValue(NAME_ID);
-    String email = MenuSettings::getValue(EMAIL_ID);
+    char name[MENU_STORAGE_SIZE];
+    char email[MENU_STORAGE_SIZE];
+    strcpy(name,  MenuSettings::getValue(NAME_ID));
+    strcpy(email, MenuSettings::getValue(EMAIL_ID));
+
     client.print(F("helo 192.168.1.1\r\n"));
 
-    client.print(String("MAIL From: <") + SMTP2GO_EMAIL + ">\r\n");
-    client.print("RCPT To: <" + email + "@gmail.com>\r\n");
+    client.print(F("MAIL From: <")); client.print(SMTP2GO_EMAIL); client.print(F(">\r\n"));
+    client.print(F("RCPT To: <")); client.print(email); client.print(F("@gmail.com>\r\n"));
     client.print(F("DATA\r\n"));
-    client.print(String("From:Secret Project <") + SMTP2GO_EMAIL + ">\r\n");
-    client.print("To:<" + email + "@gmail.com>\r\n");
+    client.print(F("From:Secret Project <")); client.print(SMTP2GO_EMAIL); client.print(F(">\r\n"));
+    client.print(F("To:<")); client.print(email); client.print(F("@gmail.com>\r\n"));
 
-    client.print("Subject:" + name + "\r\n");
-    client.print(name + "\r\n");
+    client.print(F("Subject:")); client.print(name); client.print(F("\r\n"));
+    client.print(name); client.print(F("\r\n"));
 
     client.print(F(".\r\n"));
     client.print(F("QUIT\r\n"));
@@ -147,13 +147,10 @@ byte Notifier::connect() {
     return 2;
   }
 
-  String ssidString = MenuSettings::getValue(SSID_ID);
-  char ssid[ssidString.length() + 1];
-  ssidString.toCharArray(ssid, ssidString.length() + 1);
-
-  String passwordString = MenuSettings::getValue(PASSWORD_ID);
-  char password[passwordString.length() + 1];
-  passwordString.toCharArray(password, passwordString.length() + 1);
+  char ssid[MENU_STORAGE_SIZE];
+  char password[MENU_STORAGE_SIZE];
+  strcpy(ssid ,    MenuSettings::getValue(SSID_ID));
+  strcpy(password, MenuSettings::getValue(PASSWORD_ID));
 
   byte security = WLAN_SEC_WPA2;
   byte connectedToAP = wifi->connectToAP(ssid, password, security);
