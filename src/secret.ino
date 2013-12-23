@@ -2,6 +2,7 @@
 
 #include "menu/menu.h"
 #include "notifier.h"
+#include "sensor.h"
 #include "settings.h"
 
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
@@ -35,21 +36,26 @@ void setup() {
 void loop() {
   menu.render();
 
-  // byte value = MenuUtil::stringToByte(getSecretValue());
+  // int value = Sensor::read();
   // byte threshold = MenuUtil::stringToByte(MenuSettings::getValue(THRESHOLD_ID));
   // if(value <= threshold) {
   //   notifier.sendNotificationIfInWindow();
   // }
 }
 
-char* getSecretValue() {
-  return "TODO";
-}
-
 void printSecretValue(Adafruit_RGBLCDShield *lcd) {
   lcd->clear();
   lcd->setCursor(0, 0);
-  lcd->print(getSecretValue());
+  lcd->print(F("Reading..."));
+
+  int value = Sensor::read();
+
+  lcd->clear();
+  lcd->setCursor(0, 0);
+  lcd->print(F("Current value:"));
+
+  lcd->setCursor(0, 1);
+  lcd->print(value);
 }
 
 void testWireless(Adafruit_RGBLCDShield *lcd) {
