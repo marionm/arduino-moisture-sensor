@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
-#include "notifier.h"
 #include "menu/menu.h"
+#include "notifier.h"
 #include "settings.h"
 
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();

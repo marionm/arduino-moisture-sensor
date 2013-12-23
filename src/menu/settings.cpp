@@ -5,7 +5,7 @@
 char *MenuSettings::getValue(byte blockIndex, boolean log) {
   byte index = memoryIndex(blockIndex);
 
-  char value[17];
+  char value[MENU_STORAGE_SIZE];
 
   char character = 255;
   byte i = 0;
@@ -22,7 +22,9 @@ char *MenuSettings::getValue(byte blockIndex, boolean log) {
 }
 
 void MenuSettings::setValue(byte blockIndex, char *value) {
-  if(strcmp(value, getValue(blockIndex, false)) == 0) return;
+  if(strcmp(value, getValue(blockIndex, false)) == 0) {
+    return;
+  }
 
   byte index = memoryIndex(blockIndex);
   byte i = 0;

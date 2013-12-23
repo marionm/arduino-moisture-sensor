@@ -11,7 +11,7 @@ class Notifier {
     Notifier();
     ~Notifier();
 
-    boolean testConnection(char resultMessage[16]);
+    boolean testConnection(char resultMessage[17]);
     void sendNotificationsIfInWindow();
     void sendEmail();
     void sendText();
