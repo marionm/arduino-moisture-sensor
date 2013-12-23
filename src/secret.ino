@@ -19,7 +19,7 @@ void setup() {
   new NumericMenuInput(F("Threshold"), settings, THRESHOLD_ID);
 
   MenuTier *notifications = new MenuTier(F("Notifications"), settings);
-  new TextMenuInput   (F("E-mail"),        notifications, EMAIL_ID, EMAIL_CHARACTER_SET);
+  new TextMenuInput   (F("Gmail Address"), notifications, EMAIL_ID, EMAIL_CHARACTER_SET);
   new TextMenuInput   (F("Phone number"),  notifications, PHONE_ID, NUMERIC_CHARACTER_SET);
   new NumericMenuInput(F("Earliest time"), notifications, EARLIEST_ID, 0, 23);
   new NumericMenuInput(F("Latest time"),   notifications, LATEST_ID, 0, 23);
