@@ -11,6 +11,13 @@
 
 class MenuEntry {
   public:
+    static boolean buttonPressed;
+    static long buttonHeldAt;
+    static byte buttonHoldInterval;
+
+    static byte pressedButton(Adafruit_RGBLCDShield *lcd);
+    static byte heldButton(Adafruit_RGBLCDShield *lcd);
+
     __FlashStringHelper *name;
     MenuEntry *nextSibling;
     MenuEntry *prevSibling;
@@ -20,14 +27,6 @@ class MenuEntry {
 
     virtual byte type() = 0;
     virtual MenuEntry* render(Adafruit_RGBLCDShield *lcd, boolean init = false) = 0;
-
-  protected:
-    boolean buttonPressed;
-    long buttonHeldAt;
-    byte buttonHoldInterval;
-
-    byte pressedButton(Adafruit_RGBLCDShield *lcd);
-    byte heldButton(Adafruit_RGBLCDShield *lcd);
 };
 
 #endif

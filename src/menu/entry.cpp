@@ -1,13 +1,15 @@
 #include "entry.h"
 #include "tier.h"
 
+boolean MenuEntry::buttonPressed = false;
+long MenuEntry::buttonHeldAt = 0;
+byte MenuEntry::buttonHoldInterval = 250;
+
 MenuEntry::MenuEntry(__FlashStringHelper *_name, MenuEntry *_parent) {
   name        = _name;
   parent      = _parent;
   nextSibling = NULL;
   prevSibling = NULL;
-
-  buttonPressed = true;
 
   if(parent && parent->type() == MENU_TIER) {
     ((MenuTier*)parent)->addChild(this);
@@ -16,29 +18,29 @@ MenuEntry::MenuEntry(__FlashStringHelper *_name, MenuEntry *_parent) {
 
 byte MenuEntry::pressedButton(Adafruit_RGBLCDShield *lcd) {
   byte button = lcd->readButtons();
-  if(button && !buttonPressed) {
-    buttonPressed = true;
+  if(button && !MenuEntry::buttonPressed) {
+    MenuEntry::buttonPressed = true;
     return button;
   } else if(!button){
-    buttonPressed = false;
+    MenuEntry::buttonPressed = false;
   }
   return 0;
 }
 
 byte MenuEntry::heldButton(Adafruit_RGBLCDShield *lcd) {
   byte button = lcd->readButtons();
-  if(button && !buttonPressed) {
-    buttonPressed = true;
-    buttonHeldAt = millis();
-    buttonHoldInterval = 250;
+  if(button && !MenuEntry::buttonPressed) {
+    MenuEntry::buttonPressed = true;
+    MenuEntry::buttonHeldAt = millis();
+    MenuEntry::buttonHoldInterval = 250;
   } else if(!button){
-    buttonPressed = false;
+    MenuEntry::buttonPressed = false;
     button = NULL;
   } else {
     long time = millis();
-    if(time - buttonHeldAt > buttonHoldInterval) {
-      buttonHeldAt = time;
-      buttonHoldInterval = 100;
+    if(time - MenuEntry::buttonHeldAt > MenuEntry::buttonHoldInterval) {
+      MenuEntry::buttonHeldAt = time;
+      MenuEntry::buttonHoldInterval = 100;
     } else {
       button = NULL;
     }
