@@ -13,6 +13,7 @@ Notifier::Notifier() {
   byte vbatPin =  5;
   wifi = new Adafruit_CC3000(csPin, irqPin, vbatPin, SPI_CLOCK_DIV2);
 
+  // TODO: Use wifi->connected() instead, if it works as expected
   connected = false;
 }
 
@@ -144,6 +145,7 @@ byte Notifier::connect() {
   }
 
   if(!wifi->deleteProfiles()) {
+    wifi->stop();
     return 2;
   }
 
@@ -155,12 +157,14 @@ byte Notifier::connect() {
   byte security = WLAN_SEC_WPA2;
   byte connectedToAP = wifi->connectToAP(ssid, password, security);
   if(!connectedToAP) {
+    wifi->stop();
     return 3;
   }
 
   long time = millis();
   while(!wifi->checkDHCP() && (millis() - time) < 60000L);
   if(!wifi->checkDHCP()) {
+    wifi->stop();
     return 4;
   }
 
@@ -169,6 +173,6 @@ byte Notifier::connect() {
 }
 
 void Notifier::disconnect() {
-  // TODO
-  // connected = false;
+  wifi->stop();
+  connected = false;
 }
