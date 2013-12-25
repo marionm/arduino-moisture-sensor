@@ -18,6 +18,7 @@ void MenuDisplay::render() {
   MenuEntry *next = currentEntry->render(lcd);
   if(next != currentEntry) {
     next->render(lcd, true);
+    delete currentEntry;
     currentEntry = next;
   }
 }

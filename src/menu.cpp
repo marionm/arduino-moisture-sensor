@@ -2,7 +2,7 @@
 #include "settings.h"
 
 MenuEntry* Menu::home() {
-  return &MenuTier((byte)2, homeChild, homeChildName);
+  return new MenuTier((byte)2, homeChild, homeChildName);
 }
 
 __FlashStringHelper* Menu::homeChildName(byte i) {
@@ -15,14 +15,14 @@ __FlashStringHelper* Menu::homeChildName(byte i) {
 
 MenuEntry* Menu::homeChild(byte i) {
   switch(i) {
-    case 0: return &MenuOutput(homeChildName(i), home, printSecretValue);
+    case 0: return new MenuOutput(homeChildName(i), home, printSecretValue);
     case 1: return settings();
   }
   return NULL;
 }
 
 MenuEntry* Menu::settings() {
-  return &MenuTier(4, settingsChild, settingsChildName, home);
+  return new MenuTier(4, settingsChild, settingsChildName, home);
 }
 
 __FlashStringHelper* Menu::settingsChildName(byte i) {
@@ -37,8 +37,8 @@ __FlashStringHelper* Menu::settingsChildName(byte i) {
 
 MenuEntry* Menu::settingsChild(byte i) {
   switch(i) {
-    case 0: return &TextMenuInput   (settingsChildName(i), settings, NAME_ID);
-    case 1: return &NumericMenuInput(settingsChildName(i), settings, THRESHOLD_ID);
+    case 0: return new TextMenuInput   (settingsChildName(i), settings, NAME_ID);
+    case 1: return new NumericMenuInput(settingsChildName(i), settings, THRESHOLD_ID);
     case 2: return notifications();
     case 3: return wireless();
   }
@@ -46,7 +46,7 @@ MenuEntry* Menu::settingsChild(byte i) {
 }
 
 MenuEntry* Menu::notifications() {
-  return &MenuTier(4, notificationsChild, notificationsChildName, settings);
+  return new MenuTier(4, notificationsChild, notificationsChildName, settings);
 }
 
 __FlashStringHelper* Menu::notificationsChildName(byte i) {
@@ -62,16 +62,16 @@ __FlashStringHelper* Menu::notificationsChildName(byte i) {
 MenuEntry* Menu::notificationsChild(byte i) {
   __FlashStringHelper *name = settingsChildName(i);
   switch(i) {
-    case 0: return &TextMenuInput   (name, notifications, EMAIL_ID, EMAIL_CHARACTER_SET);
-    case 1: return &TextMenuInput   (name, notifications, PHONE_ID, NUMERIC_CHARACTER_SET);
-    case 2: return &NumericMenuInput(name, notifications, EARLIEST_ID, 0, 23);
-    case 3: return &NumericMenuInput(name, notifications, LATEST_ID, 0, 23);
+    case 0: return new TextMenuInput   (name, notifications, EMAIL_ID, EMAIL_CHARACTER_SET);
+    case 1: return new TextMenuInput   (name, notifications, PHONE_ID, NUMERIC_CHARACTER_SET);
+    case 2: return new NumericMenuInput(name, notifications, EARLIEST_ID, 0, 23);
+    case 3: return new NumericMenuInput(name, notifications, LATEST_ID, 0, 23);
   }
   return NULL;
 }
 
 MenuEntry* Menu::wireless() {
-  return &MenuTier(3, wirelessChild, wirelessChildName, settings);
+  return new MenuTier(3, wirelessChild, wirelessChildName, settings);
 }
 
 __FlashStringHelper* Menu::wirelessChildName(byte i) {
@@ -86,9 +86,9 @@ __FlashStringHelper* Menu::wirelessChildName(byte i) {
 MenuEntry* Menu::wirelessChild(byte i) {
   __FlashStringHelper *name = settingsChildName(i);
   switch(i) {
-    case 0: return &TextMenuInput (name, wireless, SSID_ID,     FULL_CHARACTER_SET);
-    case 1: return &TextMenuInput (name, wireless, PASSWORD_ID, FULL_CHARACTER_SET);
-    case 2: return &MenuOutput    (name, wireless, testWireless);
+    case 0: return new TextMenuInput (name, wireless, SSID_ID,     FULL_CHARACTER_SET);
+    case 1: return new TextMenuInput (name, wireless, PASSWORD_ID, FULL_CHARACTER_SET);
+    case 2: return new MenuOutput    (name, wireless, testWireless);
   }
   return NULL;
 }
