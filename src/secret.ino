@@ -11,6 +11,8 @@ MenuDisplay menu = MenuDisplay(&lcd);
 Notifier notifier = Notifier();
 
 void setup() {
+  Serial.begin(9600);
+
   menu.enable(Menu::home());
 }
 
