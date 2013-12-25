@@ -5,23 +5,44 @@
 #include "sensor.h"
 #include "settings.h"
 
+#define DISPLAY_MODE    true
+#define BACKGROUND_MODE false
+#define DISPLAY_TIMEOUT 60000L
+
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 MenuDisplay menu = MenuDisplay(&lcd);
 
 Notifier notifier = Notifier();
 
+boolean mode;
+long lastInputAt;
+
+byte threshold;
+
 void setup() {
   Serial.begin(9600);
+
+  mode = DISPLAY_MODE;
+  lastInputAt = millis();
 
   menu.enable(Menu::home());
 }
 
 void loop() {
-  menu.render();
+  if(mode == DISPLAY_MODE) {
+    menu.render();
 
-  // int value = Sensor::read();
-  // byte threshold = MenuUtil::stringToByte(MenuSettings::getValue(THRESHOLD_ID));
-  // if(value <= threshold) {
-  //   notifier.sendNotificationIfInWindow();
-  // }
+    if(lcd.readButtons()) {
+      lastInputAt = millis();
+    } else if(millis() - lastInputAt > DISPLAY_TIMEOUT) {
+      mode = BACKGROUND_MODE;
+      menu.disable();
+      threshold = MenuUtil::stringToByte(MenuSettings::getValue(THRESHOLD_ID));
+    }
+
+  } else {
+    if(Sensor::read() <= threshold) {
+      notifier.sendNotificationsIfInWindow();
+    }
+  }
 }

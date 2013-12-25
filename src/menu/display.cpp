@@ -11,7 +11,8 @@ void MenuDisplay::enable(MenuEntry *entry) {
 }
 
 void MenuDisplay::disable() {
-  // TODO: Turn off LCD
+  lcd->noDisplay();
+  lcd->setBacklight(0);
 }
 
 void MenuDisplay::render() {
