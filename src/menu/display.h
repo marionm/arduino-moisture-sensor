@@ -1,3 +1,6 @@
+#ifndef _MenuDisplay_
+#define _MenuDisplay_
+
 #include "Adafruit_RGBLCDShield.h"
 #include "entry.h"
 
@@ -13,3 +16,5 @@ class MenuDisplay {
     Adafruit_RGBLCDShield *lcd;
     MenuEntry *currentEntry;
 };
+
+#endif
