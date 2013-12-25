@@ -7,16 +7,20 @@
 class MenuTier :
 public MenuEntry {
   public:
-    MenuTier(__FlashStringHelper *name, MenuEntry *parent = NULL);
+    MenuTier(
+      byte                 childCount,
+      MenuEntry*           (*getChild)(byte i),
+      __FlashStringHelper* (*getChildName)(byte i),
+      MenuEntry*           (*getParent)() = NULL
+    );
 
-    byte type();
     MenuEntry* render(Adafruit_RGBLCDShield *lcd, boolean init = false);
 
-    void addChild(MenuEntry *child);
-
   private:
-    MenuEntry *headChild;
-    MenuEntry *currentChild;
+    byte childIndex;
+    byte childCount;
+    MenuEntry* (*getChild)(byte i);
+    __FlashStringHelper* (*getChildName)(byte i);
 
     void renderScreen(Adafruit_RGBLCDShield *lcd);
 };

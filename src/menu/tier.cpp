@@ -1,27 +1,16 @@
 #include "tier.h"
 
-MenuTier::MenuTier(__FlashStringHelper *name, MenuEntry *parent) :
-MenuEntry(name, parent) {
-  headChild    = NULL;
-  currentChild = NULL;
-}
+MenuTier::MenuTier(
+  byte                 _childCount,
+  MenuEntry*           (*_getChild)(byte i),
+  __FlashStringHelper* (*_getChildName)(byte i),
+  MenuEntry*           (*getParent)()
+) : MenuEntry(getParent) {
+  childCount   = _childCount;
+  getChild     = _getChild;
+  getChildName = _getChildName;
 
-byte MenuTier::type() {
-  return MENU_TIER;
-}
-
-void MenuTier::addChild(MenuEntry *child) {
-  if(headChild) {
-    MenuEntry *tail = headChild;
-    while(tail->nextSibling) {
-      tail = tail->nextSibling;
-    }
-    tail->nextSibling = child;
-    child->prevSibling = tail;
-  } else {
-    headChild = child;
-    currentChild = child;
-  }
+  childIndex = 0;
 }
 
 MenuEntry* MenuTier::render(Adafruit_RGBLCDShield *lcd, boolean init) {
@@ -34,30 +23,28 @@ MenuEntry* MenuTier::render(Adafruit_RGBLCDShield *lcd, boolean init) {
 
   byte button = pressedButton(lcd); 
   if(button & BUTTON_UP) {
-    if(currentChild->prevSibling) {
-      currentChild = currentChild->prevSibling;
+    if(childIndex == 0) {
+      childIndex = childCount - 1;
     } else {
-      currentChild = headChild;
-      while(currentChild->nextSibling) {
-        currentChild = currentChild->nextSibling;
-      }
+      childIndex--;
     }
     renderScreen(lcd);
 
   } else if(button & BUTTON_DOWN) {
-    if(currentChild->nextSibling) {
-      currentChild = currentChild->nextSibling;
-    } else {
-      currentChild = headChild;
+    childIndex++;
+    if(childIndex >= childCount) {
+      childIndex = 0;
     }
     renderScreen(lcd);
 
-  } else if(button & BUTTON_LEFT && parent) {
-    currentChild = headChild;
-    nextEntry = parent;
+  } else if(button & BUTTON_LEFT) {
+    MenuEntry *parent = getParent();
+    if(parent) {
+      nextEntry = parent;
+    }
 
   } else if(button & (BUTTON_RIGHT | BUTTON_SELECT)) {
-    nextEntry = currentChild;
+    nextEntry = getChild(childIndex);
   }
 
   return nextEntry;
@@ -65,28 +52,18 @@ MenuEntry* MenuTier::render(Adafruit_RGBLCDShield *lcd, boolean init) {
 
 void MenuTier::renderScreen(Adafruit_RGBLCDShield *lcd) {
   lcd->clear();
-  if(!currentChild) return;
 
-  byte row = 0;
-  MenuEntry *child = headChild;
-  while(child != currentChild) {
-    child = child->nextSibling;
-    row += 1;
-  }
-  row %= 2;
-
+  byte row = childIndex % 2;
   lcd->setCursor(0, row);
   lcd->print(">");
 
-  if(row != 0) {
-    child = currentChild->prevSibling;
-  }
+  byte index = childIndex - row;
   lcd->setCursor(2, 0);
-  lcd->print(child->name);
+  lcd->print(getChildName(index));
 
-  child = child->nextSibling;
-  if(child) {
+  index++;
+  if(index < childCount) {
     lcd->setCursor(2, 1);
-    lcd->print(child->name);
+    lcd->print(getChildName(index));
   }
 }

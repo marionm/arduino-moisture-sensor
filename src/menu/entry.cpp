@@ -5,15 +5,8 @@ boolean MenuEntry::buttonPressed = false;
 long MenuEntry::buttonHeldAt = 0;
 byte MenuEntry::buttonHoldInterval = 250;
 
-MenuEntry::MenuEntry(__FlashStringHelper *_name, MenuEntry *_parent) {
-  name        = _name;
-  parent      = _parent;
-  nextSibling = NULL;
-  prevSibling = NULL;
-
-  if(parent && parent->type() == MENU_TIER) {
-    ((MenuTier*)parent)->addChild(this);
-  }
+MenuEntry::MenuEntry(MenuEntry* (*_getParent)()) {
+  getParent = _getParent;
 }
 
 byte MenuEntry::pressedButton(Adafruit_RGBLCDShield *lcd) {

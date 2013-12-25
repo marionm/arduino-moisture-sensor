@@ -10,9 +10,8 @@
 class MenuInput :
 public MenuEntry {
   public:
-    MenuInput(__FlashStringHelper *name, MenuEntry *parent, byte settingIndex);
+    MenuInput(__FlashStringHelper *name, MenuEntry* (*getParent)(), byte settingIndex);
 
-    byte type();
     MenuEntry* render(Adafruit_RGBLCDShield *lcd, boolean init = false);
 
   protected:
@@ -24,6 +23,7 @@ public MenuEntry {
 
   private:
     byte settingIndex;
+    __FlashStringHelper *name;
 };
 
 #endif

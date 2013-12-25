@@ -1,8 +1,8 @@
 #include "numeric_input.h"
 #include "util.h"
 
-NumericMenuInput::NumericMenuInput(__FlashStringHelper *name, MenuEntry *parent, byte settingsIndex, byte _min, byte _max) :
-MenuInput(name, parent, settingsIndex) {
+NumericMenuInput::NumericMenuInput(__FlashStringHelper *name, MenuEntry* (*getParent)(), byte settingsIndex, byte _min, byte _max) :
+MenuInput(name, getParent, settingsIndex) {
   min = _min;
   max = _max;
 

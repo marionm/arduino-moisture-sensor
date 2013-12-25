@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#include "menu/menu.h"
+#include "menu.h"
 #include "notifier.h"
 #include "sensor.h"
 #include "settings.h"
@@ -11,26 +11,7 @@ MenuDisplay menu = MenuDisplay(&lcd);
 Notifier notifier = Notifier();
 
 void setup() {
-  // TODO: Save memory by allocating children on demand (on stack?), not all up front
-  MenuTier *home = new MenuTier(F("Home"));
-  new MenuOutput(F("Check now"), home, printSecretValue);
-
-  MenuTier *settings = new MenuTier(F("Settings"), home);
-  new TextMenuInput   (F("Name"),      settings, NAME_ID);
-  new NumericMenuInput(F("Threshold"), settings, THRESHOLD_ID);
-
-  MenuTier *notifications = new MenuTier(F("Notifications"), settings);
-  new TextMenuInput   (F("Gmail Address"), notifications, EMAIL_ID, EMAIL_CHARACTER_SET);
-  new TextMenuInput   (F("Phone number"),  notifications, PHONE_ID, NUMERIC_CHARACTER_SET);
-  new NumericMenuInput(F("Earliest time"), notifications, EARLIEST_ID, 0, 23);
-  new NumericMenuInput(F("Latest time"),   notifications, LATEST_ID, 0, 23);
-
-  MenuTier *wireless = new MenuTier(F("Wireless"), settings);
-  new TextMenuInput (F("SSID"),          wireless, SSID_ID,     FULL_CHARACTER_SET);
-  new TextMenuInput (F("Password"),      wireless, PASSWORD_ID, FULL_CHARACTER_SET);
-  new MenuOutput    (F("Test wireless"), wireless, testWireless);
-
-  menu.enable(home);
+  menu.enable(Menu::home());
 }
 
 void loop() {
@@ -41,38 +22,4 @@ void loop() {
   // if(value <= threshold) {
   //   notifier.sendNotificationIfInWindow();
   // }
-}
-
-void printSecretValue(Adafruit_RGBLCDShield *lcd) {
-  lcd->clear();
-  lcd->setCursor(0, 0);
-  lcd->print(F("Reading..."));
-
-  int value = Sensor::read();
-
-  lcd->clear();
-  lcd->setCursor(0, 0);
-  lcd->print(F("Current value:"));
-
-  lcd->setCursor(0, 1);
-  lcd->print(value);
-}
-
-void testWireless(Adafruit_RGBLCDShield *lcd) {
-  lcd->clear();
-  lcd->setCursor(0, 0);
-  lcd->print(F("Connecting..."));
-
-  char result[17];
-  boolean success = notifier.testConnection(result);
-
-  lcd->clear();
-  lcd->setCursor(0, 0);
-  if(success) {
-    lcd->print(F("Connected"));
-  } else {
-    lcd->print(F("Failed"));
-  }
-  lcd->setCursor(0, 1);
-  lcd->print(result);
 }

@@ -1,7 +1,7 @@
 #include "text_input.h"
 
-TextMenuInput::TextMenuInput(__FlashStringHelper *name, MenuEntry *parent, byte settingsIndex, byte _characterSet) :
-MenuInput(name, parent, settingsIndex) {
+TextMenuInput::TextMenuInput(__FlashStringHelper *name, MenuEntry* (*getParent)(), byte settingsIndex, byte _characterSet) :
+MenuInput(name, getParent, settingsIndex) {
   characterSet = _characterSet;
 
   if(storedValue == "" || storedValue == " ") {

@@ -1,13 +1,10 @@
 #include "input.h"
 
-MenuInput::MenuInput(__FlashStringHelper *name, MenuEntry *parent, byte _settingIndex) :
-MenuEntry(name, parent) {
+MenuInput::MenuInput(__FlashStringHelper *_name, MenuEntry* (*getParent)(), byte _settingIndex) :
+MenuEntry(getParent) {
+  name = _name;
   settingIndex = _settingIndex;
   strcpy(storedValue, MenuSettings::getValue(settingIndex));
-}
-
-byte MenuInput::type() {
-  return MENU_INPUT;
 }
 
 void MenuInput::setupLcd(Adafruit_RGBLCDShield *lcd) {
@@ -34,7 +31,7 @@ MenuEntry* MenuInput::render(Adafruit_RGBLCDShield *lcd, boolean init) {
   if(button & BUTTON_SELECT) {
     teardownLcd(lcd);
     MenuSettings::setValue(settingIndex, storedValue);
-    return parent;
+    return getParent();
   }
 
   handleInput(lcd, button, heldButton(lcd));
