@@ -58,46 +58,45 @@ boolean Notifier::testConnection(char resultMessage[17]) {
   return result == 0;
 }
 
-void Notifier::sendNotificationsIfInWindow() {
-  boolean disconnectNow = false;
-  if(inNotificationWindow()) {
-    if(!connected) {
-      connect();
-      disconnectNow = true;
-    }
-  }
+boolean Notifier::sendNotificationsIfInWindow() {
+  if(!inNotificationWindow()) return false;
+  if(!connected && connect() != 0) return false;
 
-  if(disconnectNow) {
-    disconnect();
-  }
+  sendEmail();
+  sendText();
+
+  disconnect();
+
+  return true;
 }
 
 boolean Notifier::inNotificationWindow() {
+  if(connect() != 0) {
+    return false;
+  }
+
   byte earliest = MenuUtil::stringToByte(MenuSettings::getValue(EARLIEST_ID));
   byte latest   = MenuUtil::stringToByte(MenuSettings::getValue(LATEST_ID));
 
   // TODO
   byte hour = 12;
 
-  return hour >= earliest && hour <= latest;
+  if(hour >= earliest && hour <= latest) {
+    return true;
+  } else {
+    disconnect();
+    return false;
+  }
 }
 
 void Notifier::sendEmail() {
   boolean disconnectNow = false;
   if(!connected) {
-    connect();
+    if(connect() != 0) return;
     disconnectNow = true;
   }
 
-  unsigned long ip;
-  wifi->getHostByName("smtpcorp.com", &ip);
-
-  long startTime = millis();
-  Adafruit_CC3000_Client client;
-  do {
-    client = wifi->connectTCP(ip, 2525);
-  } while(!client.connected() && (millis() - startTime) < 5000L);
-
+  Adafruit_CC3000_Client client = connectToHost("smtpcorp.com", 2525);
   if(client.connected()) {
     // TODO: Support input > 16 characters and drop hardcoded @gmail.com
     char name[MENU_STORAGE_SIZE];
@@ -113,8 +112,8 @@ void Notifier::sendEmail() {
     client.print(F("From:Secret Project <")); client.print(SMTP2GO_EMAIL); client.print(F(">\r\n"));
     client.print(F("To:<")); client.print(email); client.print(F("@gmail.com>\r\n"));
 
-    client.print(F("Subject:")); client.print(name); client.print(F("\r\n"));
-    client.print(name); client.print(F("\r\n"));
+    client.print(F("Subject:")); client.print(F("I'm thirsty!")); client.print(F("\r\n"));
+    client.print(F("Water needed for: ")); client.print(name); client.print(F("\r\n"));
 
     client.print(F(".\r\n"));
     client.print(F("QUIT\r\n"));
@@ -126,13 +125,27 @@ void Notifier::sendEmail() {
 }
 
 void Notifier::sendText() {
+  char phoneNumber[MENU_STORAGE_SIZE];
+  strcpy(phoneNumber, MenuSettings::getValue(PHONE_ID));
+  if(strlen(phoneNumber) != 10) return;
+
   boolean disconnectNow = false;
   if(!connected) {
-    connect();
+    if(connect() != 0) return;
     disconnectNow = true;
   }
 
-  // TODO
+  unsigned long ip;
+  wifi->getHostByName("txtdrop.com", &ip);
+
+  long startTime = millis();
+  Adafruit_CC3000_Client client;
+  do {
+    client = wifi->connectTCP(ip, 80);
+  } while(!client.connected() && (millis() - startTime) < 5000L);
+
+  if(client.connected()) {
+  }
 
   if(disconnectNow) {
     disconnect();
@@ -170,6 +183,22 @@ byte Notifier::connect() {
 
   connected = true;
   return 0;
+}
+
+Adafruit_CC3000_Client Notifier::connectToHost(char *host, int port) {
+  Adafruit_CC3000_Client client;
+
+  if(connected) {
+    unsigned long ip;
+    wifi->getHostByName(host, &ip);
+
+    long startTime = millis();
+    do {
+      client = wifi->connectTCP(ip, port);
+    } while(!client.connected() && (millis() - startTime) < 5000L);
+  }
+
+  return client;
 }
 
 void Notifier::disconnect() {

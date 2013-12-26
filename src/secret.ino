@@ -18,9 +18,12 @@ boolean mode;
 long lastInputAt;
 
 byte threshold;
+boolean notified;
 
 void setup() {
   Serial.begin(9600);
+
+  notified = false;
 
   mode = DISPLAY_MODE;
   lastInputAt = millis();
@@ -41,8 +44,11 @@ void loop() {
     }
 
   } else {
-    if(Sensor::read() <= threshold) {
-      notifier.sendNotificationsIfInWindow();
+    int value = Sensor::read();
+    if(notified && value > threshold) {
+      notified = false;
+    } else if(!notified && value <= threshold) {
+      notified = notifier.sendNotificationsIfInWindow();
     }
   }
 }

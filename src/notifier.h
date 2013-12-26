@@ -12,7 +12,7 @@ class Notifier {
     ~Notifier();
 
     boolean testConnection(char resultMessage[17]);
-    void sendNotificationsIfInWindow();
+    boolean sendNotificationsIfInWindow();
     void sendEmail();
     void sendText();
 
@@ -22,6 +22,7 @@ class Notifier {
 
     byte inNotificationWindow();
     byte connect();
+    Adafruit_CC3000_Client connectToHost(char *host, int port = 80);
     void disconnect();
 };
 
