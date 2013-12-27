@@ -5,9 +5,10 @@
 #include "sensor.h"
 #include "settings.h"
 
-#define DISPLAY_MODE    true
-#define BACKGROUND_MODE false
-#define DISPLAY_TIMEOUT 60000L
+#define DISPLAY_MODE     true
+#define BACKGROUND_MODE  false
+#define DISPLAY_TIMEOUT  60000L
+#define BACKGROUND_SLEEP 300000L
 
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 MenuDisplay menu = MenuDisplay(&lcd);
@@ -44,6 +45,8 @@ void loop() {
     }
 
   } else {
+    delay(BACKGROUND_SLEEP);
+
     int value = Sensor::read();
     if(notified && value > threshold) {
       notified = false;
