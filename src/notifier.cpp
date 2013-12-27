@@ -135,16 +135,34 @@ void Notifier::sendText() {
     disconnectNow = true;
   }
 
-  unsigned long ip;
-  wifi->getHostByName("txtdrop.com", &ip);
-
-  long startTime = millis();
-  Adafruit_CC3000_Client client;
-  do {
-    client = wifi->connectTCP(ip, 80);
-  } while(!client.connected() && (millis() - startTime) < 5000L);
-
+  Adafruit_CC3000_Client client = connectToHost("txtdrop.com");
   if(client.connected()) {
+    char name[MENU_STORAGE_SIZE];
+    strcpy(name, MenuSettings::getValue(NAME_ID));
+
+    int contentLength = 100;
+    contentLength += strlen(name);
+
+    char content[contentLength];
+    strcpy(content, "submitted=1&submit=Send&body=I%27m%20thirst&emailfrom=");
+    strcat(content, name);
+    strcat(content, "%40garden.com");
+
+    byte i = 0;
+    byte j = 67 + strlen(name);
+    strcat(content, "&npa=");
+    for(j +=  5; i <  3; i++, j++) { content[j] = phoneNumber[i]; }
+    strcat(content, "&exchange=");
+    for(j += 10; i <  6; i++, j++) { content[j] = phoneNumber[i]; }
+    strcat(content, "&number=");
+    for(j +=  8; i < 10; i++, j++) { content[j] = phoneNumber[i]; }
+
+    client.println(F("POST http://www.txtdrop.com HTTP/1.1"));
+    client.println(F("Host: www.txtdrop.com"));
+    client.println(F("Connection: close"));
+    client.print(  F("Content-Length: ")); client.println(contentLength);
+    client.println();
+    client.println(content);
   }
 
   if(disconnectNow) {
