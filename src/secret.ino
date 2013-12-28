@@ -7,8 +7,8 @@
 
 #define DISPLAY_MODE     true
 #define BACKGROUND_MODE  false
-#define DISPLAY_TIMEOUT  60000L
-#define BACKGROUND_SLEEP 300000L
+#define DISPLAY_TIMEOUT  300000L
+#define BACKGROUND_SLEEP 1800000L
 
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 MenuDisplay menu = MenuDisplay(&lcd);
