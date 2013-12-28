@@ -26,7 +26,7 @@ class Menu {
     static MenuEntry* wirelessChild(byte i);
     static __FlashStringHelper* wirelessChildName(byte i);
 
-    static void printSecretValue(void **args);
+    static void printMoistureLevel(void **args);
     static void testWireless(void **args);
 };
 

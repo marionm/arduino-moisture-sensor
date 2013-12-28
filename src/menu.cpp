@@ -15,7 +15,7 @@ __FlashStringHelper* Menu::homeChildName(byte i) {
 
 MenuEntry* Menu::homeChild(byte i) {
   switch(i) {
-    case 0: return new MenuOutput(homeChildName(i), home, printSecretValue);
+    case 0: return new MenuOutput(homeChildName(i), home, printMoistureLevel);
     case 1: return settings();
   }
   return NULL;
@@ -93,7 +93,7 @@ MenuEntry* Menu::wirelessChild(byte i) {
   return NULL;
 }
 
-void Menu::printSecretValue(void **args) {
+void Menu::printMoistureLevel(void **args) {
   Adafruit_RGBLCDShield *lcd = (Adafruit_RGBLCDShield*)args[0];
 
   lcd->clear();
