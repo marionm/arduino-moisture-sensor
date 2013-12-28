@@ -12,9 +12,6 @@ Notifier::Notifier() {
   byte irqPin  =  3;
   byte vbatPin =  5;
   wifi = new Adafruit_CC3000(csPin, irqPin, vbatPin, SPI_CLOCK_DIV2);
-
-  // TODO: Use wifi->connected() instead, if it works as expected
-  connected = false;
 }
 
 Notifier::~Notifier() {
@@ -51,7 +48,7 @@ boolean Notifier::testConnection(char resultMessage[17]) {
       break;
   }
 
-  if(connected) {
+  if(wifi->checkConnected()) {
     disconnect();
   }
 
@@ -60,7 +57,7 @@ boolean Notifier::testConnection(char resultMessage[17]) {
 
 boolean Notifier::sendNotificationsIfInWindow() {
   if(!inNotificationWindow()) return false;
-  if(!connected && connect() != 0) return false;
+  if(!wifi->checkConnected() && connect() != 0) return false;
 
   sendEmail();
   sendText();
@@ -90,8 +87,12 @@ boolean Notifier::inNotificationWindow() {
 }
 
 void Notifier::sendEmail() {
+  Serial.println(F("Starting to send email"));
   boolean disconnectNow = false;
-  if(!connected) {
+  if(wifi->checkConnected()) {
+    Serial.println(F("Already connected to network"));
+  } else {
+    Serial.println(F("Need to connect to network"));
     if(connect() != 0) return;
     disconnectNow = true;
   }
@@ -109,28 +110,34 @@ void Notifier::sendEmail() {
     client.print(F("MAIL From: <")); client.print(SMTP2GO_EMAIL); client.print(F(">\r\n"));
     client.print(F("RCPT To: <")); client.print(email); client.print(F("@gmail.com>\r\n"));
     client.print(F("DATA\r\n"));
-    client.print(F("From:Secret Project <")); client.print(SMTP2GO_EMAIL); client.print(F(">\r\n"));
+    client.print(F("From:")); client.print(name); client.print(F(" <")); client.print(SMTP2GO_EMAIL); client.print(F(">\r\n"));
     client.print(F("To:<")); client.print(email); client.print(F("@gmail.com>\r\n"));
 
     client.print(F("Subject:")); client.print(F("I'm thirsty!")); client.print(F("\r\n"));
-    client.print(F("Water needed for: ")); client.print(name); client.print(F("\r\n"));
+    client.print(F("Time to water me! Yours truly, ")); client.print(name); client.print(F("\r\n"));
 
     client.print(F(".\r\n"));
     client.print(F("QUIT\r\n"));
   }
 
   if(disconnectNow) {
+    Serial.println(F("Disconnecting"));
     disconnect();
   }
 }
 
 void Notifier::sendText() {
+  Serial.println(F("Starting to send text"));
+
   char phoneNumber[MENU_STORAGE_SIZE];
   strcpy(phoneNumber, MenuSettings::getValue(PHONE_ID));
   if(strlen(phoneNumber) != 10) return;
 
   boolean disconnectNow = false;
-  if(!connected) {
+  if(wifi->checkConnected()) {
+    Serial.println(F("Already connected to network"));
+  } else {
+    Serial.println(F("Need to connect to network"));
     if(connect() != 0) return;
     disconnectNow = true;
   }
@@ -157,6 +164,9 @@ void Notifier::sendText() {
     strcat(content, "&number=");
     for(j +=  8; i < 10; i++, j++) { content[j] = phoneNumber[i]; }
 
+    Serial.print(F("Sending body with length ")); Serial.print(contentLength);
+    Serial.print(content);
+
     client.println(F("POST http://www.txtdrop.com HTTP/1.1"));
     client.println(F("Host: www.txtdrop.com"));
     client.println(F("Connection: close"));
@@ -171,10 +181,12 @@ void Notifier::sendText() {
 }
 
 byte Notifier::connect() {
+  Serial.println(F("Starting card..."));
   if(!wifi->begin()) {
     return 1;
   }
 
+  Serial.println(F("Deleting connection profiles..."));
   if(!wifi->deleteProfiles()) {
     wifi->stop();
     return 2;
@@ -185,13 +197,14 @@ byte Notifier::connect() {
   strcpy(ssid ,    MenuSettings::getValue(SSID_ID));
   strcpy(password, MenuSettings::getValue(PASSWORD_ID));
 
-  byte security = WLAN_SEC_WPA2;
-  byte connectedToAP = wifi->connectToAP(ssid, password, security);
+  Serial.print(F("Connecting with ")); Serial.print(ssid); Serial.print(F(" and ")); Serial.println(password);
+  byte connectedToAP = wifi->connectToAP(ssid, password, WLAN_SEC_WPA2);
   if(!connectedToAP) {
     wifi->stop();
     return 3;
   }
 
+  Serial.println("Checking DHCP...");
   long time = millis();
   while(!wifi->checkDHCP() && (millis() - time) < 60000L);
   if(!wifi->checkDHCP()) {
@@ -199,19 +212,20 @@ byte Notifier::connect() {
     return 4;
   }
 
-  connected = true;
   return 0;
 }
 
 Adafruit_CC3000_Client Notifier::connectToHost(char *host, int port) {
   Adafruit_CC3000_Client client;
 
-  if(connected) {
+  if(wifi->checkConnected()) {
     unsigned long ip;
+    Serial.print(F("Looking up ")); Serial.println(host);
     wifi->getHostByName(host, &ip);
 
     long startTime = millis();
     do {
+      Serial.print(F("Connecting to ")); Serial.println(ip);
       client = wifi->connectTCP(ip, port);
     } while(!client.connected() && (millis() - startTime) < 5000L);
   }
@@ -221,5 +235,4 @@ Adafruit_CC3000_Client Notifier::connectToHost(char *host, int port) {
 
 void Notifier::disconnect() {
   wifi->stop();
-  connected = false;
 }

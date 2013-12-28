@@ -131,4 +131,6 @@ void Menu::testWireless(void **args) {
   }
   lcd->setCursor(0, 1);
   lcd->print(result);
+
+  delay(5000L);
 }

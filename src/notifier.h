@@ -18,7 +18,6 @@ class Notifier {
 
   private:
     Adafruit_CC3000 *wifi;
-    boolean connected;
 
     byte inNotificationWindow();
     byte connect();
