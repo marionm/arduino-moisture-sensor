@@ -18,9 +18,9 @@ class Menu {
     static MenuEntry* settingsChild(byte i);
     static __FlashStringHelper* settingsChildName(byte i);
 
-    static MenuEntry* notifications();
-    static MenuEntry* notificationsChild(byte i);
-    static __FlashStringHelper* notificationsChildName(byte i);
+    // static MenuEntry* notifications();
+    // static MenuEntry* notificationsChild(byte i);
+    // static __FlashStringHelper* notificationsChildName(byte i);
 
     static MenuEntry* wireless();
     static MenuEntry* wirelessChild(byte i);

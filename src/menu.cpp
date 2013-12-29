@@ -29,46 +29,49 @@ __FlashStringHelper* Menu::settingsChildName(byte i) {
   switch(i) {
     case 0: return F("Name");
     case 1: return F("Threshold");
-    case 2: return F("Notifications");
+    // case 2: return F("Notifications");
+    case 2: return F("Gmail Address");
     case 3: return F("Wireless");
   }
   return NULL;
 }
 
 MenuEntry* Menu::settingsChild(byte i) {
+  __FlashStringHelper *name = settingsChildName(i);
   switch(i) {
-    case 0: return new TextMenuInput   (settingsChildName(i), settings, NAME_ID);
-    case 1: return new NumericMenuInput(settingsChildName(i), settings, THRESHOLD_ID);
-    case 2: return notifications();
+    case 0: return new TextMenuInput   (name, settings, NAME_ID);
+    case 1: return new NumericMenuInput(name, settings, THRESHOLD_ID);
+    // case 2: return notifications();
+    case 2: return new TextMenuInput   (name, settings, EMAIL_ID, EMAIL_CHARACTER_SET);
     case 3: return wireless();
   }
   return NULL;
 }
 
-MenuEntry* Menu::notifications() {
-  return new MenuTier(4, notificationsChild, notificationsChildName, settings);
-}
-
-__FlashStringHelper* Menu::notificationsChildName(byte i) {
-  switch(i) {
-    case 0: return F("Gmail Address");
-    case 1: return F("Phone number");
-    case 2: return F("Earliest time");
-    case 3: return F("Latest time");
-  }
-  return NULL;
-}
-
-MenuEntry* Menu::notificationsChild(byte i) {
-  __FlashStringHelper *name = settingsChildName(i);
-  switch(i) {
-    case 0: return new TextMenuInput   (name, notifications, EMAIL_ID, EMAIL_CHARACTER_SET);
-    case 1: return new TextMenuInput   (name, notifications, PHONE_ID, NUMERIC_CHARACTER_SET);
-    case 2: return new NumericMenuInput(name, notifications, EARLIEST_ID, 0, 23);
-    case 3: return new NumericMenuInput(name, notifications, LATEST_ID, 0, 23);
-  }
-  return NULL;
-}
+// MenuEntry* Menu::notifications() {
+//   return new MenuTier(1, notificationsChild, notificationsChildName, settings);
+// }
+// 
+// __FlashStringHelper* Menu::notificationsChildName(byte i) {
+//   switch(i) {
+//     case 0: return F("Gmail Address");
+//     case 1: return F("Phone number");
+//     case 2: return F("Earliest time");
+//     case 3: return F("Latest time");
+//   }
+//   return NULL;
+// }
+// 
+// MenuEntry* Menu::notificationsChild(byte i) {
+//   __FlashStringHelper *name = settingsChildName(i);
+//   switch(i) {
+//     case 0: return new TextMenuInput   (name, notifications, EMAIL_ID, EMAIL_CHARACTER_SET);
+//     case 1: return new TextMenuInput   (name, notifications, PHONE_ID, NUMERIC_CHARACTER_SET);
+//     case 2: return new NumericMenuInput(name, notifications, EARLIEST_ID, 0, 23);
+//     case 3: return new NumericMenuInput(name, notifications, LATEST_ID, 0, 23);
+//   }
+//   return NULL;
+// }
 
 MenuEntry* Menu::wireless() {
   return new MenuTier(3, wirelessChild, wirelessChildName, settings);
