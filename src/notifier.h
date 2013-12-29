@@ -1,6 +1,9 @@
 #ifndef _Notifier_
 #define _Notifier_
 
+// #define _NotifierTextDebug_
+#define _NotifierConnectionDebug_
+
 #include <Arduino.h>
 
 #include "Adafruit_RGBLCDShield.h"

@@ -87,12 +87,9 @@ boolean Notifier::inNotificationWindow() {
 }
 
 void Notifier::sendEmail() {
-  Serial.println(F("Starting to send email"));
   boolean disconnectNow = false;
   if(wifi->checkConnected()) {
-    Serial.println(F("Already connected to network"));
   } else {
-    Serial.println(F("Need to connect to network"));
     if(connect() != 0) return;
     disconnectNow = true;
   }
@@ -121,23 +118,18 @@ void Notifier::sendEmail() {
   }
 
   if(disconnectNow) {
-    Serial.println(F("Disconnecting"));
     disconnect();
   }
 }
 
 void Notifier::sendText() {
-  Serial.println(F("Starting to send text"));
-
   char phoneNumber[MENU_STORAGE_SIZE];
   strcpy(phoneNumber, MenuSettings::getValue(PHONE_ID));
   if(strlen(phoneNumber) != 10) return;
 
   boolean disconnectNow = false;
   if(wifi->checkConnected()) {
-    Serial.println(F("Already connected to network"));
   } else {
-    Serial.println(F("Need to connect to network"));
     if(connect() != 0) return;
     disconnectNow = true;
   }
@@ -151,7 +143,7 @@ void Notifier::sendText() {
     contentLength += strlen(name);
 
     char content[contentLength];
-    strcpy(content, "submitted=1&submit=Send&body=I%27m%20thirst&emailfrom=");
+    strcpy(content, "submitted=1&submit=Send&body=I%27m%20thirsty&emailfrom=");
     strcat(content, name);
     strcat(content, "%40garden.com");
 
@@ -164,8 +156,10 @@ void Notifier::sendText() {
     strcat(content, "&number=");
     for(j +=  8; i < 10; i++, j++) { content[j] = phoneNumber[i]; }
 
+#ifdef _NotifierTextDebug_
     Serial.print(F("Sending body with length ")); Serial.print(contentLength);
     Serial.print(content);
+#endif
 
     client.println(F("POST http://www.txtdrop.com HTTP/1.1"));
     client.println(F("Host: www.txtdrop.com"));
@@ -181,30 +175,32 @@ void Notifier::sendText() {
 }
 
 byte Notifier::connect() {
-  Serial.println(F("Starting card..."));
   if(!wifi->begin()) {
     return 1;
   }
 
-  Serial.println(F("Deleting connection profiles..."));
+#ifdef _NotifierConnectionDebug_
+  Serial.print(F("Deleting profiles"));
+#endif
   if(!wifi->deleteProfiles()) {
     wifi->stop();
     return 2;
   }
+#ifdef _NotifierConnectionDebug_
+  Serial.print(F("Done"));
+#endif
 
   char ssid[MENU_STORAGE_SIZE];
+  strcpy(ssid, MenuSettings::getValue(SSID_ID));
   char password[MENU_STORAGE_SIZE];
-  strcpy(ssid ,    MenuSettings::getValue(SSID_ID));
   strcpy(password, MenuSettings::getValue(PASSWORD_ID));
 
-  Serial.print(F("Connecting with ")); Serial.print(ssid); Serial.print(F(" and ")); Serial.println(password);
   byte connectedToAP = wifi->connectToAP(ssid, password, WLAN_SEC_WPA2);
   if(!connectedToAP) {
     wifi->stop();
     return 3;
   }
 
-  Serial.println("Checking DHCP...");
   long time = millis();
   while(!wifi->checkDHCP() && (millis() - time) < 60000L);
   if(!wifi->checkDHCP()) {
@@ -220,12 +216,10 @@ Adafruit_CC3000_Client Notifier::connectToHost(char *host, int port) {
 
   if(wifi->checkConnected()) {
     unsigned long ip;
-    Serial.print(F("Looking up ")); Serial.println(host);
     wifi->getHostByName(host, &ip);
 
     long startTime = millis();
     do {
-      Serial.print(F("Connecting to ")); Serial.println(ip);
       client = wifi->connectTCP(ip, port);
     } while(!client.connected() && (millis() - startTime) < 5000L);
   }

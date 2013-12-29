@@ -1,6 +1,8 @@
 #ifndef _MenuSettings_
 #define _MenuSettings_
 
+// #define _MenuSettingsDebug_
+
 #include <Arduino.h>
 
 #define MENU_STORAGE_START 0
