@@ -48,6 +48,7 @@ boolean Notifier::testConnection(char resultMessage[17]) {
       break;
   }
 
+  Serial.println(resultMessage);
   if(wifi->checkConnected()) {
     disconnect();
   }
@@ -139,7 +140,7 @@ void Notifier::sendText() {
     char name[MENU_STORAGE_SIZE];
     strcpy(name, MenuSettings::getValue(NAME_ID));
 
-    int contentLength = 100;
+    int contentLength = 101;
     contentLength += strlen(name);
 
     char content[contentLength];
@@ -148,26 +149,38 @@ void Notifier::sendText() {
     strcat(content, "%40garden.com");
 
     byte i = 0;
-    byte j = 67 + strlen(name);
+    byte j = 68 + strlen(name);
     strcat(content, "&npa=");
     for(j +=  5; i <  3; i++, j++) { content[j] = phoneNumber[i]; }
+    content[j] = '\0';
     strcat(content, "&exchange=");
     for(j += 10; i <  6; i++, j++) { content[j] = phoneNumber[i]; }
+    content[j] = '\0';
     strcat(content, "&number=");
     for(j +=  8; i < 10; i++, j++) { content[j] = phoneNumber[i]; }
+    content[j] = '\0';
 
 #ifdef _NotifierTextDebug_
-    Serial.print(F("Sending body with length ")); Serial.print(contentLength);
-    Serial.print(content);
+    Serial.print(F("Sending body with length ")); Serial.println(contentLength);
+    Serial.println(content);
 #endif
 
-    client.println(F("POST http://www.txtdrop.com HTTP/1.1"));
+    client.println(F("POST / HTTP/1.1"));
     client.println(F("Host: www.txtdrop.com"));
-    client.println(F("Connection: close"));
     client.print(  F("Content-Length: ")); client.println(contentLength);
-    client.println();
+    client.println(F("Content-Type: application/x-www-form-urlencoded"));
     client.println(content);
+
   }
+
+#ifdef _NotifierTextDebug_
+  while(client.connected()) {
+    while(client.available()) {
+      char c = client.read();
+      Serial.print(c);
+    }
+  }
+#endif
 
   if(disconnectNow) {
     disconnect();
@@ -179,16 +192,10 @@ byte Notifier::connect() {
     return 1;
   }
 
-#ifdef _NotifierConnectionDebug_
-  Serial.print(F("Deleting profiles"));
-#endif
   if(!wifi->deleteProfiles()) {
     wifi->stop();
     return 2;
   }
-#ifdef _NotifierConnectionDebug_
-  Serial.print(F("Done"));
-#endif
 
   char ssid[MENU_STORAGE_SIZE];
   strcpy(ssid, MenuSettings::getValue(SSID_ID));

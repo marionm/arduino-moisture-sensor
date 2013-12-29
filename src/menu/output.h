@@ -9,12 +9,12 @@
 class MenuOutput :
 public MenuEntry {
   public:
-    MenuOutput(__FlashStringHelper *name, MenuEntry* (*getParent)(), void (*printValue)(void **args));
+    MenuOutput(__FlashStringHelper *name, MenuEntry* (*getParent)(), void (*printValue)(Adafruit_RGBLCDShield *lcd));
 
     MenuEntry* render(Adafruit_RGBLCDShield *lcd, boolean init = false);
 
   private:
-    void (*printValue)(void **args);
+    void (*printValue)(Adafruit_RGBLCDShield *lcd);
 };
 
 #endif

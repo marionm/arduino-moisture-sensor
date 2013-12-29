@@ -93,9 +93,7 @@ MenuEntry* Menu::wirelessChild(byte i) {
   return NULL;
 }
 
-void Menu::printMoistureLevel(void **args) {
-  Adafruit_RGBLCDShield *lcd = (Adafruit_RGBLCDShield*)args[0];
-
+void Menu::printMoistureLevel(Adafruit_RGBLCDShield *lcd) {
   lcd->clear();
   lcd->setCursor(0, 0);
   lcd->print(F("Reading..."));
@@ -110,17 +108,15 @@ void Menu::printMoistureLevel(void **args) {
   lcd->print(value);
 }
 
-void Menu::testWireless(void **args) {
-  Adafruit_RGBLCDShield **lcdArgs = (Adafruit_RGBLCDShield**)args;
-  Adafruit_RGBLCDShield *lcd = (Adafruit_RGBLCDShield*)lcdArgs[0];
-  Notifier *notifier = (Notifier*)lcdArgs[1];
+void Menu::testWireless(Adafruit_RGBLCDShield *lcd) {
+  Notifier notifier = Notifier();
 
   lcd->clear();
   lcd->setCursor(0, 0);
   lcd->print(F("Connecting..."));
 
   char result[17];
-  boolean success = notifier->testConnection(result);
+  boolean success = notifier.testConnection(result);
 
   lcd->clear();
   lcd->setCursor(0, 0);
@@ -131,6 +127,4 @@ void Menu::testWireless(void **args) {
   }
   lcd->setCursor(0, 1);
   lcd->print(result);
-
-  delay(5000L);
 }

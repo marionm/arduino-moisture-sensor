@@ -26,8 +26,8 @@ class Menu {
     static MenuEntry* wirelessChild(byte i);
     static __FlashStringHelper* wirelessChildName(byte i);
 
-    static void printMoistureLevel(void **args);
-    static void testWireless(void **args);
+    static void printMoistureLevel(Adafruit_RGBLCDShield *lcd);
+    static void testWireless(Adafruit_RGBLCDShield *lcd);
 };
 
 #endif

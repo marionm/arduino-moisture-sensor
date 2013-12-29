@@ -13,8 +13,6 @@
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 MenuDisplay menu = MenuDisplay(&lcd);
 
-Notifier notifier = Notifier();
-
 boolean mode;
 long lastInputAt;
 
@@ -51,6 +49,7 @@ void loop() {
     if(notified && value > threshold) {
       notified = false;
     } else if(!notified && value <= threshold) {
+      Notifier notifier = Notifier();
       notified = notifier.sendNotificationsIfInWindow();
     }
   }
