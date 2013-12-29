@@ -62,7 +62,7 @@ boolean Notifier::sendNotificationsIfInWindow() {
   if(!wifi->checkConnected() && connect() != 0) return false;
 
   sendEmail();
-  sendText();
+  // sendText();
 
   disconnect();
 
@@ -74,21 +74,23 @@ boolean Notifier::inNotificationWindow() {
     return false;
   }
 
-  byte earliest = MenuUtil::stringToByte(MenuSettings::getValue(EARLIEST_ID));
-  byte latest   = MenuUtil::stringToByte(MenuSettings::getValue(LATEST_ID));
+  return true;
 
-  sntp _sntp = sntp(NULL, "time.nist.gov", (short)(-6 * 60), (short)(-5 * 60), true);
-  _sntp.UpdateNTPTime();
-  SNTP_Timestamp_t timestamp;
-  NetTime_t time;
-  _sntp.ExtractNTPTime(_sntp.NTPGetTime(&timestamp, true), &time);
+  // byte earliest = MenuUtil::stringToByte(MenuSettings::getValue(EARLIEST_ID));
+  // byte latest   = MenuUtil::stringToByte(MenuSettings::getValue(LATEST_ID));
 
-  if(time.hour >= earliest && time.hour <= latest) {
-    return true;
-  } else {
-    disconnect();
-    return false;
-  }
+  // sntp _sntp = sntp(NULL, "time.nist.gov", (short)(-6 * 60), (short)(-5 * 60), true);
+  // _sntp.UpdateNTPTime();
+  // SNTP_Timestamp_t timestamp;
+  // NetTime_t time;
+  // _sntp.ExtractNTPTime(_sntp.NTPGetTime(&timestamp, true), &time);
+
+  // if(time.hour >= earliest && time.hour <= latest) {
+  //   return true;
+  // } else {
+  //   disconnect();
+  //   return false;
+  // }
 }
 
 void Notifier::sendEmail() {
