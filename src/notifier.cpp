@@ -1,6 +1,7 @@
 #include "notifier.h"
 
 #include <SPI.h>
+#include "utility/sntp.h"
 
 #include "credentials.h"
 #include "menu/settings.h"
@@ -76,10 +77,13 @@ boolean Notifier::inNotificationWindow() {
   byte earliest = MenuUtil::stringToByte(MenuSettings::getValue(EARLIEST_ID));
   byte latest   = MenuUtil::stringToByte(MenuSettings::getValue(LATEST_ID));
 
-  // TODO
-  byte hour = 12;
+  sntp _sntp = sntp(NULL, "time.nist.gov", (short)(-6 * 60), (short)(-5 * 60), true);
+  _sntp.UpdateNTPTime();
+  SNTP_Timestamp_t timestamp;
+  NetTime_t time;
+  _sntp.ExtractNTPTime(_sntp.NTPGetTime(&timestamp, true), &time);
 
-  if(hour >= earliest && hour <= latest) {
+  if(time.hour >= earliest && time.hour <= latest) {
     return true;
   } else {
     disconnect();
